@@ -13,7 +13,6 @@ from django.db import models
 
 
 class Asgie(models.Model):
-    id = models.IntegerField(primary_key=True)  # AutoField?
     title = models.CharField(unique=True, max_length=250)
     title_pt = models.CharField(max_length=100)
     image = models.CharField(max_length=200)
@@ -29,6 +28,7 @@ class Asgie(models.Model):
     def __str__(self):
         return '[{}] {}'.format(self.id, self.title)
 
+# ALTER TABLE `asgie_av_resource` ADD `id` INT NOT NULL AUTO_INCREMENT PRIMARY KEY; 
 class AsgieAvResource(models.Model):
     asgie = models.ForeignKey(Asgie)
     av_resource = models.ForeignKey('AvResources')
@@ -154,7 +154,6 @@ class Filters(models.Model):
 
 
 class InformationSources(models.Model):
-    id = models.IntegerField(primary_key=True)  # AutoField?
     url = models.CharField(unique=True, max_length=500)
     news_container = models.CharField(max_length=500)
     news_link = models.CharField(max_length=500)
@@ -162,7 +161,7 @@ class InformationSources(models.Model):
     content_title = models.CharField(max_length=500)
     content_description = models.CharField(max_length=500)
     html_exception = models.CharField(max_length=1000, blank=True)
-    asgie = models.ForeignKey(Asgie)
+    asgie = models.ForeignKey(Asgie, related_name="information_sources")
     city = models.ForeignKey(Cities, blank=True, null=True)
     deleted_at = models.DateTimeField(blank=True, null=True)
     created_at = models.DateTimeField(blank=True, null=True)

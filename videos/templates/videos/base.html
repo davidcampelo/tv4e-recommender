@@ -14,6 +14,8 @@
       <div class="header">
         <ul class="nav nav-pills pull-right">
 
+          <li class=""><a href="{% url 'asgie_index' %}">ASGIE</a></li>
+          <li class=""><a href="{% url 'video_index' %}">Videos informativos</a></li>
           <li class=""><a href="{% url 'index' %}">Logout</a></li>
         </ul>
         <h2 class="text-muted">+TV4E</h2>
@@ -23,6 +25,7 @@
          {% block body %}
          {% endblock %}               
       </div>
+    <hr>
     </div>
   </body>
 </html>
