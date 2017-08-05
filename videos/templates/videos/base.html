@@ -1,0 +1,28 @@
+{% load staticfiles %}
+
+<!DOCTYPE html>
+<html lang="pt">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="{% static 'styles/bootstrap.css' %}" rel="stylesheet">
+    <link href="{% static 'styles/main.css' %}" rel="stylesheet">
+    <title>+TV4E</title>
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <ul class="nav nav-pills pull-right">
+
+          <li class=""><a href="{% url 'index' %}">Logout</a></li>
+        </ul>
+        <h2 class="text-muted">+TV4E</h2>
+      </div>
+
+      <div class="row content">
+         {% block body %}
+         {% endblock %}               
+      </div>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,27 @@
+{% extends 'videos/base.html' %}
+{% block body %}
+
+<div class="col-lg-12">
+
+    <div class="panel panel-default">
+        {% if asgies %}
+            <div class="panel-heading">
+                <strong>ASGIE</strong>
+            </div>
+            <div class="panel-body">
+                <ul>
+                    {% for asgie in asgies %}
+                    <li><a href="{% url 'asgie_detail' asgie.id %}">{{asgie.id}} - {{asgie.title}}</a></li>
+                    {% endfor %}
+                </ul>
+            </div>
+        {% else %}
+           <p>No ASGIEs were found!</p>
+        {% endif %}
+    </div>
+
+</div>
+
+
+            {{ msg }}
+{% endblock%}

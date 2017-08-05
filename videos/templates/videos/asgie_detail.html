@@ -1,0 +1,48 @@
+<!--
+
+ More on django template filters: https://docs.djangoproject.com/en/1.7/ref/templates/builtins/#ref-templates-builtins-filters
+
+ -->
+
+{% extends 'videos/base.html' %}
+{% block body %}
+
+<style type="text/css">
+    .input-color {
+        position: relative;
+    }
+    .input-color input {
+        padding-left: 20px;
+        border:none;
+    }
+    .input-color .color-box {
+        width: 14px;
+        height: 14px;
+        display: inline-block;
+        background-color: #ccc;
+        position: absolute;
+        left: 5px;
+        top: 5px;
+    }
+</style>
+
+<div class="row">
+    <div class="col-lg-12">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h2 style="margin-top:0"><strong>{{asgie.title_pt | upper}}</strong></h2>
+            </div>
+            <address>
+              <strong>ID: {{asgie.id}}</strong><br>
+              Título em inglês: {{asgie.title}}<br>
+              Data de criação: {{asgie.created_at}}<br>
+              Cor padrão: 
+              <div class="input-color">
+                <input type="text" value="{{asgie.color}}" readonly="readonly"/>
+                <div class="color-box" style="background-color: {{asgie.color}};"></div>
+            </div>
+            Imagem padrão: <img src="{{asgie.image}}">  
+        </div>
+    </div>
+</div>
+{% endblock %}
