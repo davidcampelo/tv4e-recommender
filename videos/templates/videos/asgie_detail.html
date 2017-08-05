@@ -43,6 +43,25 @@
             </div>
             Imagem padrão: <img src="{{asgie.image}}">  
         </div>
+
+
+        <div class="panel panel-default">
+            {% if information_sources %}
+                <div class="panel-heading">
+                    <strong>Fontes de informação</strong>
+                </div>
+                <div class="panel-body">
+                    <ul>
+                        {% for information_source in information_sources %}
+                        <li>{{information_source.url}}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            {% else %}
+               <p>Nenhuma fonte de informação encontrada</p>
+            {% endif %}
+        </div>
+
     </div>
 </div>
 {% endblock %}

@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.http import HttpResponse
-from tv4e.models import Asgie
+from tv4e.models import Asgie, InformationSources
 
 def index(request):
 	asgies = Asgie.objects.all()
@@ -12,5 +12,6 @@ def video_detail(request, video_id):
 
 def asgie_detail(request, asgie_id):
 	asgie = Asgie.objects.get(id=asgie_id)
-	context = {'asgie': asgie}
+	information_sources = InformationSources.objects.filter(asgie=asgie)
+	context = {'asgie': asgie, 'information_sources': information_sources}
 	return render(request, 'videos/asgie_detail.html', context)
