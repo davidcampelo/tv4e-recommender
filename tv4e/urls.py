@@ -20,6 +20,6 @@ urlpatterns = [
     url(r'^admin/', admin.site.urls),
     # ex: /
 	url(r'^$', include('view.urls')),
-    # ex: /videos/
+    # ex: /view/
 	url(r'^view/', include('view.urls')),
 ]

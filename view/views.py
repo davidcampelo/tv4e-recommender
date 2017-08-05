@@ -1,20 +1,36 @@
 from django.shortcuts import render
 from django.http import HttpResponse
-from tv4e.models import Asgie, InformationSources, AvResources, AsgieAvResource
+from django.views import generic
 
-def index(request):
-	asgies = AsgieAvResourcee.objects.all()
-	context = {'asgies': asgies}
-	return render(request, 'view/asgie_index.html', context)
+from tv4e import models
 
-def asgie_index(request):
-	asgies = Asgie.objects.all()
-	context = {'asgies': asgies}
-	return render(request, 'view/asgie_index.html', context)
+
+
+class VideoIndexView(generic.ListView):
+    template_name = 'view/video_index.html'
+    context_object_name = 'videos'
+
+    def get_queryset(self):
+        """Return the last five published questions."""
+        return models.InformativeVideos.objects.all()
+
+
+
+def video_detail(request, video_id):
+	pass
+
+
+class AsgieIndexView(generic.ListView):
+    template_name = 'view/asgie_index.html'
+    context_object_name = 'asgies'
+
+    def get_queryset(self):
+        """Return the last five published questions."""
+        return models.Asgie.objects.all()
 
 def asgie_detail(request, asgie_id):
-	asgie = Asgie.objects.get(id=asgie_id)
-	resources = [aar.av_resource.url for aar in AsgieAvResource.objects.filter(asgie=asgie)]
+	asgie = models.Asgie.objects.get(id=asgie_id)
+	resources = [aar.av_resource.url for aar in models.AsgieAvResource.objects.filter(asgie=asgie)]
 	# information_sources = InformationSources.objects.filter(asgie=asgie)
 	context = {'asgie': asgie, 'resources': resources}
 	return render(request, 'view/asgie_detail.html', context)

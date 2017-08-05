@@ -189,7 +189,6 @@ class InformationSourcesSubs(models.Model):
 
 
 class InformativeVideos(models.Model):
-    id = models.IntegerField(primary_key=True)  # AutoField?
     desc = models.CharField(max_length=10000)
     title = models.CharField(max_length=500)
     information_source = models.ForeignKey(InformationSources, blank=True, null=True)
@@ -204,6 +203,9 @@ class InformativeVideos(models.Model):
     class Meta:
         managed = False
         db_table = 'informative_videos'
+
+    def __str__(self):
+        return '[{}] {}'.format(self.id, self.title)
 
 
 class Logs(models.Model):
