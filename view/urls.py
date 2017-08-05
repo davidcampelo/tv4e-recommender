@@ -3,10 +3,8 @@ from django.conf.urls import url
 from . import views
 
 urlpatterns = [
-    # ex: /videos/
-    url(r'^$', views.index, name='index'),
-    # ex: /videos/
-    url(r'^/', views.index, name='video_index'),
+    # ex: /video/
+    url(r'^video/$', views.index, name='video_index'),
 	# ex: /videos/asgie/
 	url(r'^asgie/$', views.asgie_index, name='asgie_index'),
 	# ex: /videos/asgie/5/
