@@ -7,7 +7,7 @@
         <div id="videos">
         {% if videos %}
             {% for video in videos %}
-            <div class="col-xs-3"><a href="{% url 'video_detail' video.id %}"><img src="{% static 'img/video.png' %}" width="180">{{video.title|truncatechars:50}}...</a></div>
+            <div class="col-xs-3"><a href="{% url 'video_detail' video.id %}"><img src="{% static 'img/video.png' %}" width="180">{{video.title|lower|capfirst|truncatechars:45}}</a></div>
             {% endfor %}
         {% endif %}
 
