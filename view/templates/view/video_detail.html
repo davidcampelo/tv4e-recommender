@@ -1,0 +1,36 @@
+<!--
+
+ More on django template filters: https://docs.djangoproject.com/en/1.7/ref/templates/builtins/#ref-templates-builtins-filters
+
+ -->
+
+{% extends 'view/base.html' %}
+{% block body %}
+
+<div class="row">
+    <div class="col-lg-12">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h4><strong>{{video.id}} - {{video.title}}</strong></h4>
+            </div>
+            <div class="panel-body">
+                <ul>
+                    {% if video.information_source %}
+                    <li>ASGIE: {{video.information_source.asgie.title_pt}}</li>
+                    {% else %}
+                    <li>ASGIE: {{video.information_sources_sub.information_source.asgie.title_pt}}</li>
+                    {% endif %}
+                    <li>{{video.desc}}</li>
+                </ul>
+
+                <video controls preload=metadata width=720 height=480 poster=‘{{video.av_resource.url}}'>
+                <source src='{{video.av_resource.url}}' type=‘video/mp4'>
+                <p>Please use a modern browser to view this video.</p>
+                </video>
+                {{video.av_resource.url}}
+            </div>
+        </div>
+        
+    </div>
+</div>
+{% endblock %}

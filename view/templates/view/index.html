@@ -1,0 +1,49 @@
+{% extends "view/base.html" %}
+{% load staticfiles %}
+
+
+{% block body %}
+    <div class="col-xs-9 main max-size">
+        <div id="videos">
+        {% if videos %}
+            {% for video in videos %}
+            <div class="col-xs-3"><a href="{% url 'video_detail' video.id %}"><img src="{% static 'img/video.png' %}" width="180">{{video.title|truncatechars:50}}...</a></div>
+            {% endfor %}
+        {% endif %}
+
+        </div>
+
+        <div class="row">
+        {% if videos.has_other_pages %}
+        <ul class="pagination">
+            {% if videos.has_previous %}
+                <li><a href="?page={{movies.previous_page_number }}">&laquo;</a></li>
+            {% else %}
+                <li class="disabled"><span>&laquo;</span></li>
+            {% endif %}
+            {% for i in pages %}
+                {% if i == videos.number %}
+                    <li class="active">
+                        <span>{{ i }} <span class="sr-only">(current)</span></span>
+                    </li>
+                {% else %}
+                    <li>
+                        <a href="?page={{i}}">{{ i}}</a>
+                    </li>
+                {% endif %}
+            {% endfor %}
+            {% if videos.has_next %}
+                <li><a href="?page={{movies.next_page_number}}">&raquo;</a></li>
+            {% else %}
+                <li class="disabled"><span>&raquo;</span></li>
+            {% endif %}
+        </ul>
+        {% endif %}
+        </div>
+        <div class="row">
+            Foram encontrados {{videos_count}} videos.
+        </div>
+
+    </div>
+
+{% endblock body %}

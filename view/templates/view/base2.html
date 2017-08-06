@@ -1,10 +1,11 @@
-{% load staticfiles %}
-
 <!DOCTYPE html>
-<html lang="pt">
+<html lang="en">
   <head>
+    {% load staticfiles %}
     <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>+TV4E Viewport</title>
 
     <!-- Bootstrap -->
     <link href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" rel="stylesheet">
@@ -22,27 +23,31 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.2/jquery.min.js"></script>
     <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
 
-<!--
-    <link href="{% static 'styles/bootstrap.css' %}" rel="stylesheet">
-    <link href="{% static 'styles/main.css' %}" rel="stylesheet">
-    -->
-    <title>+TV4E Viewport</title>
-  </head>
-  <body>
+
+</head>
+<body>
     <div class="container">
-      <div class="header">
+            <nav class="navbar navbar-inverse no-padding">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle"
+                        data-toggle="collapse" data-target=".navbar-collapse">
+                </button>
+                <span class="navbar-brand" style="color: #CCCCCC">+TV4E Viewport</span>
+
+            </div>
+            <!-- Search -->
             <div class="nav nav-pills pull-right">
 
                 <form class="navbar-form" action="/view/search/">
                     <div class="form-group" style="display:inline;">
                         <input type="text" class="form-control" placeholder="Search" name="q" style="bg-color='gray'" maxlength="40">
-                        <button class="input-group-addon" style="width: 50px"> <span class="glyphicon glyphicon-search" title="Search"></span></button>
+                        <button class="input-group-addon" style="width: 40px"><i class="glyphicon glyphicon-search" title="Search"></i></button>
                     </div>
                   </form>
             </div>
-        <h2 class="text-muted">+TV4E Viewport</h2>
-      </div>
-<hr>
+        </nav>
+        <!-- end of top -->
+
         <div class="row">
             <div class="col-xs-3 sidebar collapse navbar-collapse">
                 <div class="well">
@@ -58,10 +63,14 @@
               </div>
 
 
-         {% block body %}
-         {% endblock body %}
-      </div>
-    <hr>
+{% block body %}
+{% endblock body %}
+
+
+        </div>
     </div>
-  </body>
+    <script>
+
+    </script>
+</body>
 </html>
