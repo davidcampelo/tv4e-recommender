@@ -2,8 +2,13 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="d10e97bb-4d71-4bc2-ba71-dd4bc3872945" name="Default" comment="">
+      <change type="DELETED" beforePath="$PROJECT_DIR$/view/static/img/finanças.png" afterPath="" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/view/templates/view/asgie_detail.html" afterPath="$PROJECT_DIR$/view/templates/view/asgie_detail.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/view/templates/view/base.html" afterPath="$PROJECT_DIR$/view/templates/view/base.html" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/view/templates/view/index.html" afterPath="$PROJECT_DIR$/view/templates/view/index.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/view/templates/view/video_detail.html" afterPath="$PROJECT_DIR$/view/templates/view/video_detail.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/view/views.py" afterPath="$PROJECT_DIR$/view/views.py" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -18,8 +23,8 @@
       <file leaf-file-name="views.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/view/views.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="150">
-              <caret line="10" column="19" lean-forward="false" selection-start-line="10" selection-start-column="19" selection-end-line="10" selection-end-column="19" />
+            <state relative-caret-position="75">
+              <caret line="5" column="65" lean-forward="false" selection-start-line="5" selection-start-column="65" selection-end-line="5" selection-end-column="65" />
               <folding>
                 <element signature="e#0#35#0" expanded="true" />
               </folding>
@@ -27,27 +32,61 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="base2.html" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/view/templates/view/base2.html">
+      <file leaf-file-name="index.html" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/view/templates/view/index.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="122">
-              <caret line="38" column="0" lean-forward="false" selection-start-line="38" selection-start-column="0" selection-end-line="46" selection-end-column="18" />
+            <state relative-caret-position="135">
+              <caret line="9" column="86" lean-forward="false" selection-start-line="9" selection-start-column="86" selection-end-line="9" selection-end-column="86" />
               <folding>
-                <element signature="n#style#0;n#span#0;n#div#0;n#nav#0;n#div#0;n#body#0;n#html#0;n#!!top" expanded="true" />
-                <element signature="n#style#0;n#div#0;n#form#0;n#div#1;n#nav#0;n#div#0;n#body#0;n#html#0;n#!!top" expanded="true" />
-                <element signature="n#style#0;n#input#0;n#div#0;n#form#0;n#div#1;n#nav#0;n#div#0;n#body#0;n#html#0;n#!!top" expanded="true" />
-                <element signature="n#style#0;n#button#0;n#div#0;n#form#0;n#div#1;n#nav#0;n#div#0;n#body#0;n#html#0;n#!!top" expanded="true" />
+                <element signature="n#style#0;n#td#0;n#tr#0;n#table#0;n#!!top" expanded="true" />
+                <element signature="n#style#0;n#div#0;n#div#0;n#td#0;n#tr#0;n#table#0;n#!!top" expanded="true" />
+                <element signature="n#style#0;n#td#1;n#tr#0;n#table#0;n#!!top" expanded="true" />
+                <element signature="n#style#0;n#div#0;n#div#0;n#td#1;n#tr#0;n#table#0;n#!!top" expanded="true" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="index.html" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/view/templates/view/index.html">
+      <file leaf-file-name="base.html" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/view/templates/view/base.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="0">
-              <caret line="0" column="21" lean-forward="true" selection-start-line="0" selection-start-column="21" selection-end-line="0" selection-end-column="21" />
-              <folding />
+            <state relative-caret-position="146">
+              <caret line="40" column="24" lean-forward="false" selection-start-line="38" selection-start-column="24" selection-end-line="40" selection-end-column="24" />
+              <folding>
+                <element signature="n#style#0;n#div#0;n#form#0;n#div#0;n#div#0;n#div#0;n#body#0;n#html#0;n#!!top" expanded="true" />
+                <element signature="n#style#0;n#input#0;n#div#0;n#form#0;n#div#0;n#div#0;n#div#0;n#body#0;n#html#0;n#!!top" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="video_detail.html" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/view/templates/view/video_detail.html">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="210">
+              <caret line="14" column="34" lean-forward="false" selection-start-line="14" selection-start-column="34" selection-end-line="14" selection-end-column="34" />
+              <folding>
+                <element signature="n#style#0;n#div#0;n#div#0;n#!!top" expanded="true" />
+                <element signature="e#500#506#0" expanded="true" />
+                <element signature="e#506#512#0" expanded="true" />
+                <element signature="e#512#518#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="asgie_detail.html" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/view/templates/view/asgie_detail.html">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="208">
+              <caret line="34" column="3" lean-forward="false" selection-start-line="34" selection-start-column="3" selection-end-line="34" selection-end-column="3" />
+              <folding>
+                <element signature="n#style#0;n#div#0;n#div#0;n#!!top" expanded="true" />
+                <element signature="e#898#904#0" expanded="true" />
+                <element signature="e#904#910#0" expanded="true" />
+                <element signature="e#910#916#0" expanded="true" />
+                <element signature="n#style#0;n#div#0;n#div#0;n#li#4;n#ul#0;n#div#1;n#div#0;n#!!top" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -56,6 +95,11 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
+      <find>col-</find>
+      <find>color</find>
+      <find>panel-headin</find>
+      <find>title</find>
+      <find>search</find>
       <find>genre</find>
     </findStrings>
   </component>
@@ -65,14 +109,15 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/view/templates/view/video_detail.html" />
-        <option value="$PROJECT_DIR$/view/urls.py" />
         <option value="$PROJECT_DIR$/tv4e/urls.py" />
         <option value="$PROJECT_DIR$/view/templates/view/base2.html" />
+        <option value="$PROJECT_DIR$/tv4e/models.py" />
+        <option value="$PROJECT_DIR$/view/urls.py" />
         <option value="$PROJECT_DIR$/view/views.py" />
         <option value="$PROJECT_DIR$/view/templates/view/base.html" />
-        <option value="$PROJECT_DIR$/view/templates/view/asgie_detail.html" />
         <option value="$PROJECT_DIR$/view/templates/view/index.html" />
+        <option value="$PROJECT_DIR$/view/templates/view/video_detail.html" />
+        <option value="$PROJECT_DIR$/view/templates/view/asgie_detail.html" />
       </list>
     </option>
   </component>
@@ -163,6 +208,50 @@
               <option name="myItemId" value="static" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="styles" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="tv4e" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="tv4e" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="view" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="static" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="tv4e" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="tv4e" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="view" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="static" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="img" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
           </PATH>
           <PATH>
             <PATH_ELEMENT>
@@ -185,7 +274,7 @@
   </component>
   <component name="PropertiesComponent">
     <property name="settings.editor.selected.configurable" value="configurable.group.editor" />
-    <property name="SearchEverywhereHistoryKey" value="base.ht&#9;FILE&#9;file:///Users/davidcampelo/Dropbox/professional/recommender_systems/tv4e/view/templates/view/base.html" />
+    <property name="SearchEverywhereHistoryKey" value="boot&#9;FILE&#9;file:///Users/davidcampelo/Dropbox/professional/recommender_systems/tv4e/view/static/styles/bootstrap.css&#10;base.ht&#9;FILE&#9;file:///Users/davidcampelo/Dropbox/professional/recommender_systems/tv4e/view/templates/view/base.html" />
   </component>
   <component name="RunDashboard">
     <option name="ruleStates">
@@ -328,9 +417,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding>
-            <element signature="e#0#33#0" expanded="true" />
-          </folding>
+          <folding />
         </state>
       </provider>
     </entry>
@@ -346,7 +433,31 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="2640">
           <caret line="178" column="22" lean-forward="false" selection-start-line="178" selection-start-column="4" selection-end-line="178" selection-end-column="22" />
-          <folding />
+          <folding>
+            <marker date="1502052131000" expanded="true" signature="6875:7437" ph="..." />
+            <marker date="1502052131000" expanded="true" signature="7515:7579" ph="..." />
+            <marker date="1502052131000" expanded="true" signature="7603:7656" ph="..." />
+            <marker date="1502052131000" expanded="true" signature="7684:8168" ph="..." />
+            <marker date="1502052131000" expanded="true" signature="8118:8168" ph="..." />
+            <marker date="1502052131000" expanded="true" signature="8202:8419" ph="..." />
+            <marker date="1502052131000" expanded="true" signature="8363:8419" ph="..." />
+            <marker date="1502052131000" expanded="true" signature="8460:9014" ph="..." />
+            <marker date="1502052131000" expanded="true" signature="8949:9014" ph="..." />
+            <marker date="1502052131000" expanded="true" signature="9052:9404" ph="..." />
+            <marker date="1502052131000" expanded="true" signature="9342:9404" ph="..." />
+            <marker date="1502052131000" expanded="true" signature="9440:10011" ph="..." />
+            <marker date="1502052131000" expanded="true" signature="9952:10011" ph="..." />
+            <marker date="1502052131000" expanded="true" signature="10061:10374" ph="..." />
+            <marker date="1502052131000" expanded="true" signature="10299:10374" ph="..." />
+            <marker date="1502052131000" expanded="true" signature="10416:10711" ph="..." />
+            <marker date="1502052131000" expanded="true" signature="10645:10711" ph="..." />
+            <marker date="1502052131000" expanded="true" signature="10749:10978" ph="..." />
+            <marker date="1502052131000" expanded="true" signature="10917:10978" ph="..." />
+            <marker date="1502052131000" expanded="true" signature="11008:11366" ph="..." />
+            <marker date="1502052131000" expanded="true" signature="11314:11366" ph="..." />
+            <marker date="1502052131000" expanded="true" signature="11395:11862" ph="..." />
+            <marker date="1502052131000" expanded="true" signature="11811:11862" ph="..." />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -359,39 +470,11 @@
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/view/models.py" />
-    <entry file="file://$PROJECT_DIR$/view/templates/view/video_detail.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="330">
-          <caret line="26" column="26" lean-forward="false" selection-start-line="26" selection-start-column="26" selection-end-line="26" selection-end-column="26" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/view/admin.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/tv4e/urls.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="327">
-          <caret line="22" column="45" lean-forward="true" selection-start-line="22" selection-start-column="45" selection-end-line="22" selection-end-column="45" />
-          <folding>
-            <element signature="e#638#679#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/view/urls.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="210">
-          <caret line="14" column="80" lean-forward="false" selection-start-line="14" selection-start-column="68" selection-end-line="14" selection-end-column="80" />
-          <folding>
-            <element signature="e#0#33#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -419,14 +502,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/tv4e/models.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2955">
-          <caret line="199" column="14" lean-forward="false" selection-start-line="199" selection-start-column="4" selection-end-line="199" selection-end-column="14" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/view/templates/view/asgie_index.html">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="225">
@@ -435,9 +510,67 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/tv4e/models.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="2121">
+          <caret line="199" column="14" lean-forward="false" selection-start-line="199" selection-start-column="4" selection-end-line="199" selection-end-column="14" />
+          <folding>
+            <marker date="1502052131000" expanded="true" signature="6875:7437" ph="..." />
+            <marker date="1502052131000" expanded="true" signature="7515:7579" ph="..." />
+            <marker date="1502052131000" expanded="true" signature="7603:7656" ph="..." />
+            <marker date="1502052131000" expanded="true" signature="7684:8168" ph="..." />
+            <marker date="1502052131000" expanded="true" signature="8118:8168" ph="..." />
+            <marker date="1502052131000" expanded="true" signature="8202:8419" ph="..." />
+            <marker date="1502052131000" expanded="true" signature="8363:8419" ph="..." />
+            <marker date="1502052131000" expanded="true" signature="8460:9014" ph="..." />
+            <marker date="1502052131000" expanded="true" signature="8949:9014" ph="..." />
+            <marker date="1502052131000" expanded="true" signature="9052:9404" ph="..." />
+            <marker date="1502052131000" expanded="true" signature="9342:9404" ph="..." />
+            <marker date="1502052131000" expanded="true" signature="9440:10011" ph="..." />
+            <marker date="1502052131000" expanded="true" signature="9952:10011" ph="..." />
+            <marker date="1502052131000" expanded="true" signature="10061:10374" ph="..." />
+            <marker date="1502052131000" expanded="true" signature="10299:10374" ph="..." />
+            <marker date="1502052131000" expanded="true" signature="10416:10711" ph="..." />
+            <marker date="1502052131000" expanded="true" signature="10645:10711" ph="..." />
+            <marker date="1502052131000" expanded="true" signature="10749:10978" ph="..." />
+            <marker date="1502052131000" expanded="true" signature="10917:10978" ph="..." />
+            <marker date="1502052131000" expanded="true" signature="11008:11366" ph="..." />
+            <marker date="1502052131000" expanded="true" signature="11314:11366" ph="..." />
+            <marker date="1502052131000" expanded="true" signature="11395:11862" ph="..." />
+            <marker date="1502052131000" expanded="true" signature="11811:11862" ph="..." />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/tv4e/urls.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="305">
+          <caret line="22" column="45" lean-forward="true" selection-start-line="22" selection-start-column="45" selection-end-line="22" selection-end-column="45" />
+          <folding>
+            <element signature="e#638#679#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/view/__init__.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/view/urls.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="180">
+          <caret line="12" column="0" lean-forward="false" selection-start-line="12" selection-start-column="0" selection-end-line="12" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/view/templates/view/base2.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="122">
+        <state relative-caret-position="570">
           <caret line="38" column="0" lean-forward="false" selection-start-line="38" selection-start-column="0" selection-end-line="46" selection-end-column="18" />
           <folding>
             <element signature="n#style#0;n#span#0;n#div#0;n#nav#0;n#div#0;n#body#0;n#html#0;n#!!top" expanded="true" />
@@ -448,10 +581,18 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/view/static/styles/main.css">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-757">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/view/views.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="150">
-          <caret line="10" column="19" lean-forward="false" selection-start-line="10" selection-start-column="19" selection-end-line="10" selection-end-column="19" />
+        <state relative-caret-position="75">
+          <caret line="5" column="65" lean-forward="false" selection-start-line="5" selection-start-column="65" selection-end-line="5" selection-end-column="65" />
           <folding>
             <element signature="e#0#35#0" expanded="true" />
           </folding>
@@ -460,29 +601,60 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/view/templates/view/base.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="284">
-          <caret line="52" column="27" lean-forward="false" selection-start-line="52" selection-start-column="27" selection-end-line="52" selection-end-column="27" />
+        <state relative-caret-position="146">
+          <caret line="40" column="24" lean-forward="false" selection-start-line="38" selection-start-column="24" selection-end-line="40" selection-end-column="24" />
           <folding>
             <element signature="n#style#0;n#div#0;n#form#0;n#div#0;n#div#0;n#div#0;n#body#0;n#html#0;n#!!top" expanded="true" />
             <element signature="n#style#0;n#input#0;n#div#0;n#form#0;n#div#0;n#div#0;n#div#0;n#body#0;n#html#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#button#0;n#div#0;n#form#0;n#div#0;n#div#0;n#div#0;n#body#0;n#html#0;n#!!top" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/view/templates/view/asgie_detail.html">
+    <entry file="file://$PROJECT_DIR$/view/static/styles/bootstrap.css">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="51">
-          <caret line="23" column="12" lean-forward="true" selection-start-line="23" selection-start-column="12" selection-end-line="23" selection-end-column="12" />
+        <state relative-caret-position="134">
+          <caret line="187" column="18" lean-forward="false" selection-start-line="187" selection-start-column="12" selection-end-line="187" selection-end-column="18" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/view/templates/view/index.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="21" lean-forward="true" selection-start-line="0" selection-start-column="21" selection-end-line="0" selection-end-column="21" />
-          <folding />
+        <state relative-caret-position="135">
+          <caret line="9" column="86" lean-forward="false" selection-start-line="9" selection-start-column="86" selection-end-line="9" selection-end-column="86" />
+          <folding>
+            <element signature="n#style#0;n#td#0;n#tr#0;n#table#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#div#0;n#div#0;n#td#0;n#tr#0;n#table#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#td#1;n#tr#0;n#table#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#div#0;n#div#0;n#td#1;n#tr#0;n#table#0;n#!!top" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/view/templates/view/video_detail.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="210">
+          <caret line="14" column="34" lean-forward="false" selection-start-line="14" selection-start-column="34" selection-end-line="14" selection-end-column="34" />
+          <folding>
+            <element signature="n#style#0;n#div#0;n#div#0;n#!!top" expanded="true" />
+            <element signature="e#500#506#0" expanded="true" />
+            <element signature="e#506#512#0" expanded="true" />
+            <element signature="e#512#518#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/view/templates/view/asgie_detail.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="208">
+          <caret line="34" column="3" lean-forward="false" selection-start-line="34" selection-start-column="3" selection-end-line="34" selection-end-column="3" />
+          <folding>
+            <element signature="n#style#0;n#div#0;n#div#0;n#!!top" expanded="true" />
+            <element signature="e#898#904#0" expanded="true" />
+            <element signature="e#904#910#0" expanded="true" />
+            <element signature="e#910#916#0" expanded="true" />
+            <element signature="n#style#0;n#div#0;n#div#0;n#li#4;n#ul#0;n#div#1;n#div#0;n#!!top" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>

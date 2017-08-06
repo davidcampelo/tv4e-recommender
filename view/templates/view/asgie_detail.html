@@ -5,6 +5,7 @@
  -->
 
 {% extends 'view/base.html' %}
+{% load staticfiles %}
 {% block body %}
 
 <style type="text/css">
@@ -26,15 +27,17 @@
     }
 </style>
 
-<div class="row">
-    <div class="col-lg-12">
         <div class="panel panel-default">
-            <div class="panel-heading">
-                <h4><strong>{{asgie.title_pt | upper}}</strong></h4>
+            <div class="panel-heading" style="font-size:2rem;">
+                <button type="button" class="btn btn-default btn-sm" onclick="javascript:history.back()">
+          <span class="glyphicon glyphicon-step-backward"></span>
+        </button>
+                &nbsp;&nbsp;&nbsp;<strong>ASGIE</strong>
             </div>
             <div class="panel-body">
                 <ul>
                     <li>ID: {{asgie.id}}</li>
+                    <li>Título: <strong>{{asgie.title_pt | upper}}</strong></li>
                     <li>Título em inglês: {{asgie.title}}</li>
                     <li>Data de criação: {{asgie.created_at}}</li>
                     <li>Cor padrão: 
@@ -42,7 +45,7 @@
                         <input type="text" value="{{asgie.color}}" readonly="readonly"/>
                         <div class="color-box" style="background-color: {{asgie.color}};"></div>
                     </div></li>
-                    <li>Imagem padrão: <img src="{{asgie.image}}"></li>
+                    <li>Imagem padrão: <img src="{% static 'img/'|add:asgie.image %}" width="100%"></li>
                 </ul>
             </div>
         </div>
@@ -81,6 +84,5 @@
             {% endif %}
         </div>
 
-    </div>
-</div>
-{% endblock %}
+
+{% endblock body %}

@@ -36,32 +36,21 @@
                 <form class="navbar-form" action="/view/search/">
                     <div class="form-group" style="display:inline;">
                         <input type="text" class="form-control" placeholder="Search" name="q" style="bg-color='gray'" maxlength="40">
-                        <button class="input-group-addon" style="width: 50px"> <span class="glyphicon glyphicon-search" title="Search"></span></button>
+                        <button type="button" class="btn btn-default btn-sm">
+                            <span class="glyphicon glyphicon-search"></span>
+                        </button>
                     </div>
                   </form>
             </div>
         <h2 class="text-muted">+TV4E Viewport</h2>
       </div>
 <hr>
-        <div class="row">
-            <div class="col-xs-3 sidebar collapse navbar-collapse">
-                <div class="well">
-                    <strong>ASGIE</strong><br/>
-                    <ul class="nav nav-sidebar">
-                    {% if asgies %}
-                    {% for asgie in asgies %}
-                        <li> <a href="{% url 'asgie_detail' asgie.id%}">{{asgie.title_pt}}</a> </li>
-                    {% endfor %}
-                    {% endif %}
-                    </ul>
-                </div>
-              </div>
-
 
          {% block body %}
          {% endblock body %}
+
+ <hr>
       </div>
-    <hr>
-    </div>
+
   </body>
 </html>

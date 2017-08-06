@@ -7,14 +7,16 @@
 {% extends 'view/base.html' %}
 {% block body %}
 
-<div class="row">
-    <div class="col-lg-12">
         <div class="panel panel-default">
-            <div class="panel-heading">
-                <h4><strong>{{video.id}} - {{video.title}}</strong></h4>
+            <div class="panel-heading" style="font-size:2rem">
+                <button type="button" class="btn btn-default btn-sm" onclick="javascript:history.back()">
+          <span class="glyphicon glyphicon-step-backward"></span>
+        </button>
+                &nbsp;&nbsp;&nbsp;<strong>Vídeo informativo</strong>
             </div>
             <div class="panel-body">
                 <ul>
+                    <li><strong>Título: {{video.id}} - {{video.title}}</strong></li>
                     {% if video.information_source %}
                     <li>ASGIE: {{video.information_source.asgie.title_pt}}</li>
                     {% else %}
@@ -30,7 +32,5 @@
                 {{video.av_resource.url}}
             </div>
         </div>
-        
-    </div>
-</div>
+
 {% endblock %}

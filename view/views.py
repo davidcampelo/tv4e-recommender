@@ -3,7 +3,7 @@ from django.http import HttpResponse
 from django.views import generic
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 
-from tv4e.models import Asgie, InformativeVideos
+from tv4e.models import Asgie, InformativeVideos, AsgieAvResource
 
 
 def index(request):
@@ -82,6 +82,6 @@ class AsgieIndexView(generic.ListView):
 
 def asgie_detail(request, asgie_id):
 	asgie = Asgie.objects.get(id=asgie_id)
-	resources = [aar.av_resource.url for aar in models.AsgieAvResource.objects.filter(asgie=asgie)]
+	resources = [aar.av_resource.url for aar in AsgieAvResource.objects.filter(asgie=asgie)]
 	context = {'asgie': asgie, 'resources': resources}
 	return render(request, 'view/asgie_detail.html', context)
