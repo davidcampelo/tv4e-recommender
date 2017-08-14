@@ -1,6 +1,6 @@
 # +TV4E recommender system
 
-The [+TV4E Project][http://socialitv.web.ua.pt/index.php/projects/sponsored-projects/tv4e/] is an interactive television platform which allows automatically the enrichment of television experience with the integration of social contents. In order to achieve a more compelling and personalized approach a system for recommending video contents according to the users' preferences.
+The [+TV4E Project](http://socialitv.web.ua.pt/index.php/projects/sponsored-projects/tv4e/) is an interactive television platform which allows automatically the enrichment of television experience with the integration of social contents. In order to achieve a more compelling and personalized approach a system for recommending video contents according to the users' preferences.
 
 This systsem is still under  development, and so this README is still under construction.
 
