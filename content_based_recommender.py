@@ -12,81 +12,109 @@ import pandas as pd
 import numpy as np
 from math import *
 
-from sklearn.feature_extraction.text import CountVectorizer
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.metrics.pairwise import linear_kernel
 from sklearn.decomposition import PCA, TruncatedSVD	
 import nltk
 import seaborn as sns
 import matplotlib.pyplot as plt
 
+import redis
+
 from view.models import Asgie, InformativeVideos, AsgieAvResource
 
-
-
-
-# videos = InformativeVideos.objects.all()
-# for video in videos:
-#     source = video.information_source
-#     if source is None:
-#         source = video.information_sources_sub
-#         source = source.information_source
-#     asgie = source.asgie
-#     print("%s == %s" % (video.title, asgie.title_pt))
-
-
-#             return x if x != "" else "None"
-
-
-
-
-
-# array = []
-
+# XXX Code to remove duplicated videos from DB
+# array = [1]
 # while len(array) > 0:
-# 	from django.db.models import Count
-# 	array = []
-# 	duplicate = InformativeVideos.objects.values('title').annotate(title_count=Count('title')).filter(title_count__gt=1)
-# 	for data in duplicate:
-# 	    email = data['title']
-# 	    array.append(InformativeVideos.objects.filter(title=email).order_by('pk')[:1])
+#     from django.db.models import Count
+#     array = []
+#     duplicate = InformativeVideos.objects.values('title').annotate(title_count=Count('title')).filter(title_count__gt=1)
+#     for data in duplicate:
+#         email = data['title']
+#         array.append(InformativeVideos.objects.filter(title=email).order_by('pk')[:1])
+#     for video in array:
+#         v = InformativeVideos.objects.filter(pk=video)
+#         v.delete()
 
-# 	for video in array:
-# 	    v = InformativeVideos.objects.filter(pk=video)
-# 	    v.delete()
 
-
-logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.DEBUG)
+logging.basicConfig(format='[%(asctime)s] %(levelname)s - %(message)s', level=logging.DEBUG)
 
 
 class ContentBasedRecommender:
 
     def __init__(self):
+
         # The values below can be changed to tweak the recommender algorithm
         self.n_features_total = 100
-        self.n_most_similar = 3
+        self.n_most_similar = 4
 
-        # Do not change the values below
+        self.consider_asgie_categories = False
         self.df = None
         self.df_vectors = None
         self.similarity_score_dict = {}
         self.X = None
-        self.X_title = None
-        self.X_desc = None
+        self.X_tfidf_matrix = None
+        self.X_text_contents = None
 
 
-    def get_vectorizer(self, ngram_range=(1, 3), min_df=2, max_df=1.0):
+    def run(self):
         """
-        Define a binary CountVectorizer (Feature Presence) using n-grams and min and max document frequency
-        :param ngram_range: n-grams are created for all numbers within this range
-        :param min_df: min document frequency of features
-        :param max_df: max document frequency of features
+        Load and transform the +TV4E informative contents, train a content-based recommender system and make a recommendation for each video
         :return:
         """
-        vectorizer = CountVectorizer(ngram_range=ngram_range,
-                                     tokenizer=self.tokenize,
-                                     min_df=min_df,
-                                     max_df=max_df,
-                                     binary=True)
-        return vectorizer
+        self.configure_redis()
+        self.load_data()
+        self.vectorize()
+        if self.consider_asgie_categories:
+			df_asgie = pd.DataFrame(None)
+			df_asgie['asgie_title_pt'] = self.df['asgie_title_pt']
+			dummies = pd.get_dummies(df_asgie).astype(int)
+			self.X = np.concatenate((self.X_text_contents, dummies), axis=1)
+        else:
+			self.X = self.X_text_contents
+
+        #self.X = self.reduce_dimensionality(self.X, n_features=self.n_features_total)
+        self.find_similar()
+        self.visualize_data()
+        #self.save_output_to_csv()
+
+    def configure_redis(self):
+        # XXX Put url in a config file!
+        logging.debug("Flushing REDIS DB...")
+        self._redis = redis.StrictRedis.from_url('redis://localhost:6379')
+        self._redis.flushdb()
+
+
+    # Load data
+    def load_data(self):
+        """
+        Loads the DataFrame with contents. 
+        :return: DataFrame with id, title and desc of items
+        """
+        logging.debug("Loading data...")
+        videos = InformativeVideos.objects.all()
+        # XXX merge title and desc in the for loop
+        data = np.array([[video.id, video.title, video.desc, video.asgie_title_pt] for video in videos])
+        self.df = pd.DataFrame(data=data[0:,0:], index=data[0:,0], columns=['id', 'title', 'desc', 'asgie_title_pt'])
+        self.df['text_contents'] = self.df[['title', 'desc']].apply(lambda x: " ".join(x), axis=1)
+
+        logging.debug("Number of items: {0}".format(len(self.df)))
+
+
+    # Vectorize data and reduce dimensionality
+    def vectorize(self):
+        """
+        Vectorize training data, i.e. perform a 2-gram feature extraction and selection using a TF-IDF method 
+        :return: Result is a numeric and weighted feature vector notation for each item
+        """
+        logging.debug("Vectorizing text contents...")
+        vectorizer = TfidfVectorizer(ngram_range=(1,2), tokenizer=self.tokenize, min_df=2)
+        self.X_tfidf_matrix = vectorizer.fit_transform(self.df['text_contents'])
+        self.X_text_contents = self.X_tfidf_matrix.toarray()
+        self.X_text_contents = np.array(self.X_text_contents, dtype=float)
+
+        logging.debug("Number of features in total DataFrame: {0}".format(self.X_text_contents.shape[1]))
+
 
     @staticmethod
     def tokenize(text):
@@ -97,7 +125,7 @@ class ContentBasedRecommender:
 		"""
 		PORTUGUESE_STOP_WORDS = nltk.corpus.stopwords.words("portuguese")
 		STEMMER = nltk.stem.RSLPStemmer()
-		MINIMUM_WORD_LENGTH = 1
+		MINIMUM_WORD_LENGTH = 3
 		# tokenize all email lines - separate words considering punctuation
 		tokenized = nltk.tokenize.word_tokenize(text)
 
@@ -109,100 +137,20 @@ class ContentBasedRecommender:
 		return stems
 
 
-    def run(self):
-        """
-        Load and transform the +TV4E informative contents, train a content-based recommender system and make a recommendation for each video
-        :return:
-        """
-        self.load()
-        self.vectorize()
-        self.reduce_dimensionality(self.X, n_features=self.n_features_total)
-        self.visualize_data()
-        self.find_similar()
-        self.save_output_to_csv()
-
-    # Load data
-    def load(self):
-        """
-        Loads the DataFrame with contents. 
-        :return: DataFrame with id, title and desc of items
-        """
-        videos = InformativeVideos.objects.all()
-        data = np.array([[video.id, video.title, video.desc, video.asgie_title_pt] for video in videos])
-        
-        self.df = pd.DataFrame(data=data[0:,0:], index=data[0:,0], columns=['id', 'title', 'desc', 'asgie_title_pt'])
-        # self.df = read_frame(videos)
-        # self.df = self.df[['id', 'title', 'desc']]
-        logging.debug("Number of items: {0}\n".format(len(self.df)))
-
-
-    # Vectorize data and reduce dimensionality
-    def vectorize(self):
-        """
-        Vectorize training data, i.e. perform a 3-gram feature extraction and selection method using FP, Chi or RP
-        :return: Result is a numeric and weighted feature vector notation for each item
-        """
-        # Vectorize items
-        self.vectorize_title()    # Add title as dummies
-        self.vectorize_descs()  # Add content as dummies
-
-        # Concatenate vectors, i.e. title, descs
-        metrics = (self.X_title, self.X_desc)
-        self.X = np.concatenate(metrics, axis=1)
-        logging.debug("Number of features in total DataFrame: {0}".format(self.X.shape[1]))
-
-    def vectorize_title(self):
-        """
-        Vectorize titles.
-        :return:
-        """
-        # Define vectorizer and apply on content to obtain an M x N array
-        vectorizer = self.get_vectorizer(ngram_range=(1, 2),
-                                         min_df=2)
-        self.X_title = vectorizer.fit_transform(self.df['title'])
-        self.X_title = self.X_title.toarray()
-
-        self.X_title = np.array(self.X_title, dtype=float)
-        logging.debug("Number of features in title: {0}".format(len(vectorizer.vocabulary_)))
-       
-        # Reduce dimensionality of title features
-        self.X_title = self.reduce_dimensionality(self.X_title, n_features=round(len(vectorizer.vocabulary_) * 0.2, 1))
-
-
-    def vectorize_descs(self):
-        """
-        Vectorize descs.
-        :return:
-        """
-        # Define vectorizer and apply on content to obtain an M x N array
-        vectorizer = self.get_vectorizer(ngram_range=(1, 1),
-                                         min_df=4,
-                                         max_df=0.3)
-        self.X_desc = vectorizer.fit_transform(self.df['desc'])
-        self.X_desc = self.X_desc.toarray()
-        self.X_desc = np.array(self.X_desc, dtype=float)
-        logging.debug("Number of features in content: {0}".format(len(vectorizer.vocabulary_)))
-        # Reduce dimensionality of content features
-        self.X_desc = self.reduce_dimensionality(self.X_desc, n_features=round(len(vectorizer.vocabulary_) * 0.1, 1))
-
-
-
     def reduce_dimensionality(self, X, n_features):
         """
-        Apply PCA or SVD to reduce dimension to n_features.
+        Apply SVD to reduce dimension to n_features.
         :param X:
         :param n_features:
         :return:
         """
-        n_features = int(n_features)
-        # Initialize reduction method: PCA or SVD
-        # reducer = PCA(n_components=n_features)
-        reducer = TruncatedSVD(n_components=n_features)
+        reducer = TruncatedSVD(n_components=int(n_features))
         # Fit and transform data to n_features-dimensional space
         reducer.fit(X)
         X = reducer.transform(X)
         logging.debug("Reduced number of features to {0}".format(n_features))
         logging.debug("Percentage explained: %s\n" % reducer.explained_variance_ratio_.sum())
+
         return X
 
 
@@ -229,7 +177,7 @@ class ContentBasedRecommender:
         Transform the DataFrame to the 2-dimensional case and visualizes the data. The first titles are used as labels.
         :return:
         """
-        logging.debug("Preparing visualization of DataFrame")
+        logging.debug("Preparing visualization of DataFrame...")
         # Reduce dimensionality to 2 features for visualization purposes
         X_visualization = self.reduce_dimensionality(self.X, n_features=2)
         df = self.prepare_dataframe(X_visualization)
@@ -250,11 +198,10 @@ class ContentBasedRecommender:
                    scatter_kws={"s": 150})
         # Adjust borders and add title
         sns.set(font_scale=2)
-        plt.title('Visualization of items in a 2-dimensional space')
+        plt.title('Visualization of +TV4E Informative Videos in a 2-dimensional space')
         plt.subplots_adjust(right=0.80, top=0.90, left=0.12, bottom=0.12)
         # Show plot
         plt.show()
-
 
 
     # Train recommender
@@ -263,6 +210,7 @@ class ContentBasedRecommender:
         Find the n most similar items for each item in the DataFrame
         :return:
         """
+        logging.debug("Calculating similarities with [{}] items...".format(self.n_most_similar))
         # Prepare DataFrame by assigning each item in the DataFrame its corresponding coordinates
         self.df_vectors = self.prepare_dataframe(self.X)
         # Calculate similarity for all TMT item and define the n most similar items
@@ -305,8 +253,10 @@ class ContentBasedRecommender:
                 del similarity_scores[most_similar_index]
                 # Find corresponding title and set it as most similar item i in DataFrame
                 # title = self.df_vectors.loc[most_similar_index]['title'].encode('utf-8')
-                title_plus_score = "{} ({:.2f})".format(most_similar_index, most_similar_score)
+                title_plus_score = "{} {:.2f}".format(most_similar_index, most_similar_score)
                 self.df_vectors.set_value(index, 'most_similar_'+str(i+1), title_plus_score)
+
+                self._redis.rpush(index, title_plus_score)
 
     def calculate_similarity(self, i1, i2):
         """
@@ -315,15 +265,18 @@ class ContentBasedRecommender:
         :param i2: coordinates (feature values) of item 2
         :return:
         """
-        similarity = self.cosine_similarity(i1, i2)  # Cosine similarity formula
-        # similarity = euclidean_distance(i1, i2)    # Euclidean distance formula
+        similarity = self.cosine_similarity(i1, i2) 
         similarity = "{0:.2f}".format(round(similarity, 2))
         return float(similarity)
 
     @staticmethod
     def cosine_similarity(x, y):
+    	"""
+    	Cosine similarity formula
+    	"""
         def square_rooted(v):
             return round(sqrt(sum([a * a for a in v])), 3)
+       
         numerator = sum(a * b for a, b in zip(x, y))
         denominator = square_rooted(x) * square_rooted(y)
         return round(numerator/float(denominator), 3)
@@ -333,6 +286,7 @@ class ContentBasedRecommender:
         Save output DataFrame to csv file
         :return:
         """
+        logging.debug("Saving CSV file...")
         file_name = 'output.csv'
         try:
             self.df_vectors.to_csv(file_name, encoding='utf-8', sep=',')

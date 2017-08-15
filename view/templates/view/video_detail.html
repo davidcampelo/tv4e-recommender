@@ -5,8 +5,44 @@
  -->
 
 {% extends 'view/base.html' %}
+{% load staticfiles %}
+
 {% block body %}
 
+<script>
+        function get_similar(content_id) {
+            url = '/rs/cb/content/' + content_id + '/'
+
+            $.getJSON(url, 
+                function(result) {
+                    result.data.forEach(function(element, index, array) {
+                        image_url = '{% static 'img/video.png' %}'
+
+                        rec_div = document.createElement('div')
+                        rec_div.setAttribute('class', "col-sm-3 img-responsive")
+
+                        a = document.createElement('a')
+                        a.setAttribute('href', '/view/video/' + element.target_id)
+
+                        img = document.createElement('img')
+                        img.setAttribute('src', image_url)
+                        img.setAttribute('class',"img-responsive")
+                        a.appendChild(img)
+
+                        span = document.createElement('span')
+                        span.innerHTML = element.target_title + ' - (confiança: '+ element.confidence + ')'
+                        a.appendChild(span)
+
+                        rec_div.appendChild(a)
+
+                        recs = document.getElementById('similar_contents')
+                        recs.appendChild(rec_div)
+                        recs.style.visibility = 'visible'
+                    })
+                });
+        }
+
+</script>
         <div class="panel panel-default">
             <div class="panel-heading" style="font-size:2rem">
                 <button type="button" class="btn btn-default btn-sm" onclick="javascript:history.back()">
@@ -17,6 +53,7 @@
             <div class="panel-body">
                 <ul>
                     <li><strong>Título: {{video.id}} - {{video.title}}</strong></li>
+                    <li>URL: <a href="{{video.av_resource.url}}">{{video.av_resource.url}}</a></li>
                     {% if video.information_source %}
                     <li>ASGIE: {{video.information_source.asgie.title_pt}}</li>
                     {% else %}
@@ -24,13 +61,21 @@
                     {% endif %}
                     <li>{{video.desc}}</li>
                 </ul>
-
+                <center>
                 <video controls preload=metadata width=720 height=480 poster=‘{{video.av_resource.url}}'>
                 <source src='{{video.av_resource.url}}' type=‘video/mp4'>
                 <p>Please use a modern browser to view this video.</p>
                 </video>
-                {{video.av_resource.url}}
+            </center>
             </div>
+            <div class="panel-body">
+                <div id="similar_contents" class="row" style="visibility: hidden">
+                    <h3>Vídeos similares</h3>
+                </div>
+            </div>
+            <script>
+                 get_similar('{{ video.id }}')
+            </script>
         </div>
 
 {% endblock %}
