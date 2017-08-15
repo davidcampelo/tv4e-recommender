@@ -6,9 +6,12 @@ This systsem is still under  development, and so this README is still under cons
 
 # Installation guide:
 
-The following is expecting you to have python 2.7.x installed on your machine. I recommend looking [here](https://www.quora.com/How-can-I-install-Python-on-Ubuntu) if you haven't yet. In addition, I've been implementing and testing it on UBUNTU 14.04.
- 
- For windows users it's a good idea to install the Anaconda package. Anaconda is the leading open data science platform powered by Python (according to their homepage) [Anaconda](https://www.continuum.io/downloads)
+System requirements:
+* Ubuntu 14.04
+* Redis DB (Click [here](https://hostpresto.com/community/tutorials/how-to-install-and-configure-redis-on-ubuntu-14-04/)  for instructions)
+* Python 2.7.x
+
+For windows users it's a good idea to install the Anaconda package. Anaconda is the leading open data science platform powered by Python (according to their homepage) [Anaconda](https://www.continuum.io/downloads)
  
 ### Download code
 ```bash
