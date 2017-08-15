@@ -22,5 +22,7 @@ urlpatterns = [
     # ex: /
 	url(r'^$', RedirectView.as_view(url='view', permanent=False), name='index'),
     # ex: /view/
-	url(r'^view/', include('view.urls')),
+    url(r'^view/', include('view.urls')),
+    # ex: /rs/
+    url(r'^rs/', include('rs.urls')),
 ]
