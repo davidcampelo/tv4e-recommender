@@ -28,7 +28,10 @@ class Asgie(models.Model):
     def __str__(self):
         return '[{}] {}'.format(self.id, self.title)
 
-# ALTER TABLE `asgie_av_resource` ADD `id` INT NOT NULL AUTO_INCREMENT PRIMARY KEY; 
+# ALTER TABLE `tv4e`.`asgie_av_resource` 
+# ADD COLUMN `id` INT(10) NOT NULL FIRST,
+# DROP PRIMARY KEY;
+
 class AsgieAvResource(models.Model):
     asgie = models.ForeignKey(Asgie)
     av_resource = models.ForeignKey('AvResources')
@@ -53,7 +56,7 @@ class AvResourceInformativeVideo(models.Model):
 
 class AvResources(models.Model):
     id = models.IntegerField(primary_key=True)  # AutoField?
-    url = models.CharField(unique=True, max_length=500)
+    url = models.CharField(unique=True, max_length=255)
     name = models.CharField(max_length=250, blank=True)
     av_resources_type = models.ForeignKey('AvResourcesTypes')
     deleted_at = models.DateTimeField(blank=True, null=True)
@@ -95,7 +98,7 @@ class BoxInformativeVideo(models.Model):
 class Boxes(models.Model):
     id = models.IntegerField(primary_key=True)  # AutoField?
     uu_id = models.IntegerField()
-    serial = models.CharField(max_length=500)
+    serial = models.CharField(max_length=255)
     on_state = models.IntegerField()
     city = models.ForeignKey('Cities')
     created_at = models.DateTimeField(blank=True, null=True)
@@ -154,7 +157,7 @@ class Filters(models.Model):
 
 
 class InformationSources(models.Model):
-    url = models.CharField(unique=True, max_length=500)
+    url = models.CharField(unique=True, max_length=255)
     news_container = models.CharField(max_length=500)
     news_link = models.CharField(max_length=500)
     content_container = models.CharField(max_length=500)
@@ -204,8 +207,16 @@ class InformativeVideos(models.Model):
         managed = False
         db_table = 'informative_videos'
 
+    @property
+    def asgie_title_pt(self):
+        source = self.information_source
+        if source is None:
+            source = self.information_sources_sub
+            source = source.information_source
+        return source.asgie.title_pt
+
     def __str__(self):
-        return '[{}] {}'.format(self.id, self.title)
+        return self.id
 
 
 class Logs(models.Model):

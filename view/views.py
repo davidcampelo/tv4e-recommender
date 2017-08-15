@@ -3,7 +3,7 @@ from django.http import HttpResponse
 from django.views import generic
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 
-from tv4e.models import Asgie, InformativeVideos, AsgieAvResource
+from models import Asgie, InformativeVideos, AsgieAvResource
 
 
 def index(request):
