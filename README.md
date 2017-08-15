@@ -6,7 +6,7 @@ This systsem is still under  development, and so this README is still under cons
 
 # Installation guide:
 
-The following is expecting you to have python 2.7.x installed on your machine. I recommend looking that the [Hitchhikers guide to Python](http://docs.python-guide.org/en/latest/) if you haven't.
+The following is expecting you to have python 2.7.x installed on your machine. I recommend looking [here](https://www.quora.com/How-can-I-install-Python-on-Ubuntu) if you haven't yet. In addition, I've been implementing and testing it on UBUNTU 14.04.
  
  For windows users it's a good idea to install the Anaconda package. Anaconda is the leading open data science platform powered by Python (according to their homepage) [Anaconda](https://www.continuum.io/downloads)
  
@@ -19,7 +19,7 @@ Look at the following guide for more details [guide](http://docs.python-guide.or
  
 ```bash
 > cd tv4e-recommender
-> virtualenv tv4e_recommender
+> virtualenv tv4e_recommender -p python-2.7
 > source prs/bin/activate
 ```
 
