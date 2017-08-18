@@ -49,6 +49,8 @@ class ContentBasedRecommender:
         self.n_most_similar = 4
 
         self.consider_asgie_categories = False
+        self.save_raw_data_to_csv = False
+        self.save_raw_data_filename = "videos.csv"
         self.df = None
         self.df_vectors = None
         self.similarity_score_dict = {}
@@ -62,7 +64,7 @@ class ContentBasedRecommender:
         Load and transform the +TV4E informative contents, train a content-based recommender system and make a recommendation for each video
         :return:
         """
-        self.configure_redis()
+        #self.configure_redis()
         self.load_data()
         self.vectorize()
         if self.consider_asgie_categories:
@@ -76,7 +78,7 @@ class ContentBasedRecommender:
         #self.X = self.reduce_dimensionality(self.X, n_features=self.n_features_total)
         self.find_similar()
         self.visualize_data()
-        #self.save_output_to_csv()
+        self.save_output_to_csv()
 
     def configure_redis(self):
         # XXX Put url in a config file!
@@ -97,8 +99,10 @@ class ContentBasedRecommender:
         data = np.array([[video.id, video.title, video.desc, video.asgie_title_pt] for video in videos])
         self.df = pd.DataFrame(data=data[0:,0:], index=data[0:,0], columns=['id', 'title', 'desc', 'asgie_title_pt'])
         self.df['text_contents'] = self.df[['title', 'desc']].apply(lambda x: " ".join(x), axis=1)
-
-        logging.debug("Number of items: {0}".format(len(self.df)))
+        if self.save_raw_data_to_csv:
+            logging.debug("Saving raw data to CSV [%s]..." % self.save_raw_data_filename)
+            self.df.to_csv('videos.csv', encoding='utf-8', sep=',', index=False)
+        logging.debug("Data Loaded! Number of items: {0}".format(len(self.df)))
 
 
     # Vectorize data and reduce dimensionality
@@ -108,7 +112,7 @@ class ContentBasedRecommender:
         :return: Result is a numeric and weighted feature vector notation for each item
         """
         logging.debug("Vectorizing text contents...")
-        vectorizer = TfidfVectorizer(ngram_range=(1,2), tokenizer=self.tokenize, min_df=2)
+        vectorizer = TfidfVectorizer(ngram_range=(1,2), tokenizer=self.tokenizer, min_df=2)
         self.X_tfidf_matrix = vectorizer.fit_transform(self.df['text_contents'])
         self.X_text_contents = self.X_tfidf_matrix.toarray()
         self.X_text_contents = np.array(self.X_text_contents, dtype=float)
@@ -117,7 +121,7 @@ class ContentBasedRecommender:
 
 
     @staticmethod
-    def tokenize(text):
+    def tokenizer(text):
 		"""
 		Tokenizes sequences of text and stems the tokens.
 		:param text: String to tokenize
@@ -179,11 +183,12 @@ class ContentBasedRecommender:
         """
         logging.debug("Preparing visualization of DataFrame...")
         # Reduce dimensionality to 2 features for visualization purposes
-        X_visualization = self.reduce_dimensionality(self.X, n_features=2)
+        X_visualization = self.reduce_dimensionality(self.X, n_features=3)
         df = self.prepare_dataframe(X_visualization)
         # Set X and Y coordinate for each item
         df['X coordinate'] = df['coordinates'].apply(lambda x: x[0])
         df['Y coordinate'] = df['coordinates'].apply(lambda x: x[1])
+        df['Z coordinate'] = df['coordinates'].apply(lambda x: x[2])
         # Create a list of markers, each tag has its own marker
         n_asgie_title_pt = len(self.df['asgie_title_pt'].unique())
         markers_choice_list = ['o', 's', '^', '.', 'v', '<', '>']
