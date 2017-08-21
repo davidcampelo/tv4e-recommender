@@ -16,7 +16,7 @@
             $.getJSON(url, 
                 function(result) {
                     result.data.forEach(function(element, index, array) {
-                        image_url = '{% static 'img/video.png' %}'
+                        image_url = '/static/img/'+  element.target_img
 
                         rec_div = document.createElement('div')
                         rec_div.setAttribute('class', "col-sm-3 img-responsive")
@@ -43,10 +43,10 @@
         }
 
 </script>
-        <div class="panel panel-default">
-            <div class="panel-heading" style="font-size:2rem">
-                <button type="button" class="btn btn-default btn-sm" onclick="javascript:history.back()">
-          <span class="glyphicon glyphicon-step-backward"></span>
+        <div class="panel panel-default" style="margin-left:10px; margin-right:10px;">
+            <div class="panel-heading" style="font-size:2rem"><a href="{% url 'video_index' %}"
+                <button type="button" class="btn btn-default btn-sm">
+          <span class="glyphicon glyphicon-step-backward"></span></a>
         </button>
                 &nbsp;&nbsp;&nbsp;<strong>Vídeo informativo</strong>
             </div>

@@ -6,7 +6,7 @@ from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from models import Asgie, InformativeVideos, AsgieAvResource
 
 
-def index(request):
+def video_index(request):
 
     paginate_by = 8
 
@@ -41,28 +41,9 @@ def index(request):
                     'pages': range(page_start, page_end),
                     }
 
-    return render(request, 'view/index.html', context_dict)
+    return render(request, 'view/video_index.html', context_dict)
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-class VideoIndexView(generic.ListView):
-    template_name = 'view/video_index.html'
-    context_object_name = 'videos'
-
-    def get_queryset(self):
-        return InformativeVideos.objects.all()
 
 
 def video_detail(request, video_id):
@@ -81,7 +62,23 @@ class AsgieIndexView(generic.ListView):
 
 
 def asgie_detail(request, asgie_id):
-	asgie = Asgie.objects.get(id=asgie_id)
-	resources = [aar.av_resource.url for aar in AsgieAvResource.objects.filter(asgie=asgie)]
-	context = {'asgie': asgie, 'resources': resources}
-	return render(request, 'view/asgie_detail.html', context)
+    asgie = Asgie.objects.get(id=asgie_id)
+    resources = [aar.av_resource.url for aar in AsgieAvResource.objects.filter(asgie=asgie)]
+    context = {'asgie': asgie, 'resources': resources}
+    return render(request, 'view/asgie_detail.html', context)
+
+
+###################################################################################################################
+class UserIndexView(generic.ListView):
+    template_name = 'view/asgie_index.html'
+    context_object_name = 'asgies'
+
+    def get_queryset(self):
+        return Asgie.objects.all()
+
+
+def user_detail(request, asgie_id):
+    asgie = Asgie.objects.get(id=asgie_id)
+    resources = [aar.av_resource.url for aar in AsgieAvResource.objects.filter(asgie=asgie)]
+    context = {'asgie': asgie, 'resources': resources}
+    return render(request, 'view/asgie_detail.html', context)

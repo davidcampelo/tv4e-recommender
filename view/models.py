@@ -224,6 +224,14 @@ class InformativeVideos(models.Model):
             source = source.information_source
         return source.asgie.id
 
+    @property
+    def asgie(self):
+        source = self.information_source
+        if source is None:
+            source = self.information_sources_sub
+            source = source.information_source
+        return source.asgie
+
     def __str__(self):
         return self.id
 

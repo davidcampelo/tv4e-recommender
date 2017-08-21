@@ -6,10 +6,10 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <!-- Bootstrap -->
+    <!-- Bootstrap
     <link href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" rel="stylesheet">
     <link href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css" rel="stylesheet">
-
+ -->
 
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -22,29 +22,36 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.2/jquery.min.js"></script>
     <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
 
-<!--
+
     <link href="{% static 'styles/bootstrap.css' %}" rel="stylesheet">
     <link href="{% static 'styles/main.css' %}" rel="stylesheet">
-    -->
+    
     <title>+TV4E Viewport</title>
   </head>
   <body>
-    <div class="container">
-      <div class="header">
-            <div class="nav nav-pills pull-right">
 
-                <form class="navbar-form" action="/view/search/">
+      
+      <div class="header">
+              <ul class="nav nav-pills pull-right">
+                <li><a href="{% url 'user_index' %}">Utilizadores</a></li>
+                <li><a href="{% url 'asgie_index' %}">ASGIEs</a></li>
+                <li><a href="{% url 'video_index' %}">Vídeos</a></li>
+                <li><a href="/">Logout</a></li>
+                <li>
+
+                <form class="navbar-form" action="/">
                     <div class="form-group" style="display:inline;">
-                        <input type="text" class="form-control" placeholder="Search" name="q" style="bg-color='gray'" maxlength="40">
+                        <input type="text" style="width:150px" class="form-control" placeholder="Search" name="q" style="bg-color='gray'" maxlength="20">
                         <button type="button" class="btn btn-default btn-sm">
                             <span class="glyphicon glyphicon-search"></span>
                         </button>
                     </div>
                   </form>
-            </div>
-        <h2 class="text-muted">+TV4E Viewport</h2>
+                </li>
+              </ul>
+        <h2 class="text-muted">&nbsp;+TV4E Viewport</h2>
       </div>
-<hr>
+    
 
          {% block body %}
          {% endblock body %}
