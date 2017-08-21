@@ -27,11 +27,11 @@
     }
 </style>
 
-        <div class="panel panel-default">
-            <div class="panel-heading" style="font-size:2rem;">
-                <button type="button" class="btn btn-default btn-sm" onclick="javascript:history.back()">
-          <span class="glyphicon glyphicon-step-backward"></span>
-        </button>
+<div class="panel panel-default" style="margin-left:10px; margin-right:10px;">
+            <div class="panel-heading" style="font-size:2rem"><a href="{% url 'video_index' %}"
+                <button type="button" class="btn btn-default btn-sm">
+                    <span class="glyphicon glyphicon-step-backward"></span></a>
+                </button>
                 &nbsp;&nbsp;&nbsp;<strong>ASGIE</strong>
             </div>
             <div class="panel-body">
@@ -48,17 +48,16 @@
                     <li>Imagem padrão: <img src="{% static 'img/'|add:asgie.image %}" width="100%"></li>
                 </ul>
             </div>
-        </div>
-
-        <div class="panel panel-default">
+        
+        <div class="panel panel-default"  style="margin-left:10px; margin-right:10px;">
             {% if asgie.information_sources.count %}
-                <div class="panel-heading">
-                    <strong>Fontes de informação</strong>
+                <div class="panel-heading" style="font-size:2rem">            
+                        Fontes de informação
                 </div>
                 <div class="panel-body">
                     <ul>
                         {% for information_source in asgie.information_sources.all %}
-                        <li>{{information_source.url}}</li>
+                        <li><a href="{{information_source.url}}" target="_blank">{{information_source.url}}</a></li>
                         {% endfor %}
                     </ul>
                 </div>
@@ -67,15 +66,15 @@
             {% endif %}
         </div>
 
-        <div class="panel panel-default">
+        <div class="panel panel-default"  style="margin-left:10px; margin-right:10px;">
             {% if resources %}
-                <div class="panel-heading">
-                    <strong>Recursos</strong>
+                <div class="panel-heading" style="font-size:2rem">            
+                        Recursos utilizados
                 </div>
                 <div class="panel-body">
                     <ul>
                         {% for resource in resources %}
-                        <li><a href="{{resource}}">{{resource}}</a> </li>
+                        <li><a href="{{resource}}" target="_blank">{{resource}}</a> </li>
                         {% endfor %}
                     </ul>
                 </div>
@@ -83,6 +82,7 @@
                <p>Nenhuma fonte de informação encontrada</p>
             {% endif %}
         </div>
+</div>
 
 
 {% endblock body %}

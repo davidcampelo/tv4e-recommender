@@ -46,8 +46,8 @@
         <div class="panel panel-default" style="margin-left:10px; margin-right:10px;">
             <div class="panel-heading" style="font-size:2rem"><a href="{% url 'video_index' %}"
                 <button type="button" class="btn btn-default btn-sm">
-          <span class="glyphicon glyphicon-step-backward"></span></a>
-        </button>
+                    <span class="glyphicon glyphicon-step-backward"></span></a>
+                </button>
                 &nbsp;&nbsp;&nbsp;<strong>Vídeo informativo</strong>
             </div>
             <div class="panel-body">
@@ -68,14 +68,16 @@
                 </video>
             </center>
             </div>
-            <div class="panel-body">
-                <div id="similar_contents" class="row" style="visibility: hidden">
-                    <h3>Vídeos similares</h3>
+            <div class="panel panel-default" style="margin-left:10px; margin-right:10px;">
+                <div class="panel-heading" style="font-size:2rem">            
+                        Vídeos similares
+                </div>
+                <div class="panel-body" id="similar_contents" class="row" style="visibility: hidden">
+                    <script>
+                         get_similar('{{ video.id }}')
+                    </script>
                 </div>
             </div>
-            <script>
-                 get_similar('{{ video.id }}')
-            </script>
         </div>
 
 {% endblock %}

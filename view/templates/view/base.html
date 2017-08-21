@@ -33,31 +33,17 @@
       
       <div class="header">
               <ul class="nav nav-pills pull-right">
-                <li><a href="{% url 'user_index' %}">Utilizadores</a></li>
-                <li><a href="{% url 'asgie_index' %}">ASGIEs</a></li>
-                <li><a href="{% url 'video_index' %}">Vídeos</a></li>
+                <li class="{% if request.resolver_match.url_name == 'user_index' %}active{%endif%}"><a href="{% url 'user_index' %}">Utilizadores</a></li>
+                <li class="{% if request.resolver_match.url_name == 'asgie_index' %}active{%endif%}"><a href="{% url 'asgie_index' %}">ASGIEs</a></li>
+                <li class="{% if request.resolver_match.url_name == 'video_index' %}active{%endif%}"><a href="{% url 'video_index' %}">Vídeos informativos</a></li>
                 <li><a href="/">Logout</a></li>
-                <li>
-
-                <form class="navbar-form" action="/">
-                    <div class="form-group" style="display:inline;">
-                        <input type="text" style="width:150px" class="form-control" placeholder="Search" name="q" style="bg-color='gray'" maxlength="20">
-                        <button type="button" class="btn btn-default btn-sm">
-                            <span class="glyphicon glyphicon-search"></span>
-                        </button>
-                    </div>
-                  </form>
-                </li>
               </ul>
-        <h2 class="text-muted">&nbsp;+TV4E Viewport</h2>
+        <h2 class="text-muted active"><strong>&nbsp;+TV4E Viewport</strong></h2>
       </div>
     
 
          {% block body %}
          {% endblock body %}
-
- <hr>
-      </div>
 
   </body>
 </html>
