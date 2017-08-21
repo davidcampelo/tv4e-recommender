@@ -96,7 +96,6 @@ class BoxInformativeVideo(models.Model):
 
 
 class Boxes(models.Model):
-    id = models.IntegerField(primary_key=True)  # AutoField?
     uu_id = models.IntegerField()
     serial = models.CharField(max_length=255)
     on_state = models.IntegerField()

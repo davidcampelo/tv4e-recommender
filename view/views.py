@@ -3,7 +3,7 @@ from django.http import HttpResponse
 from django.views import generic
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 
-from models import Asgie, InformativeVideos, AsgieAvResource
+from models import Users, Asgie, InformativeVideos, AsgieAvResource
 
 
 def video_index(request):
@@ -70,11 +70,11 @@ def asgie_detail(request, asgie_id):
 
 ###################################################################################################################
 class UserIndexView(generic.ListView):
-    template_name = 'view/asgie_index.html'
-    context_object_name = 'asgies'
+    template_name = 'view/user_index.html'
+    context_object_name = 'items'
 
     def get_queryset(self):
-        return Asgie.objects.all()
+        return Users.objects.all()
 
 
 def user_detail(request, asgie_id):

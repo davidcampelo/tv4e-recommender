@@ -2,24 +2,35 @@
 {% block body %}
 
 <div class="col-lg-12">
-
-    <div class="panel panel-default">
-        {% if videos %}
-            <div class="panel-heading">
-                <strong>Utilizadores</strong>
-            </div>
-            <div class="panel-body">
-                <ul>
-                    {% for video in videos %}
-                    <li><a href="{% url 'user_detail' video.id %}">{{video.id}} - {{video.title}}</a></li>
-                    {% endfor %}
-                </ul>
-            </div>
+    <div class="max-size panel panel-default">
+        {% if asgies %}
+        <div class="panel-heading">
+            <table width="100%" cellspacing="0" cellpadding="0">
+                <tr>
+                    <td align="left"><h4><strong>Utilizadores</strong></h4></td>
+                    <td align="right"><form class="navbar-form" action="/">
+                        <div class="form-group" style="display:inline;">
+                            <input type="text" style="width:150px" class="form-control" placeholder="Search" name="q" style="bg-color='gray'" maxlength="20">
+                            <button type="button" class="btn btn-default btn-sm">
+                                <span class="glyphicon glyphicon-search"></span>
+                            </button>
+                        </div>
+                      </form>
+                    </td>
+                </tr>
+            </table>
+        </div>            
+        <div class="panel-body">
+            <ul>
+                {% for item in items %}
+                <li><a href="{% url 'user_detail' item.id %}">{{item.id}} - {{item.name}}</a></li>
+                {% endfor %}
+            </ul>
+        </div>
         {% else %}
-           <p>Sem vídeos!</p>
+           <p>Dados não encontrados!</p>
         {% endif %}
     </div>
-
 </div>
 
 
