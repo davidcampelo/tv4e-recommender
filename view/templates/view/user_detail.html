@@ -1,0 +1,70 @@
+<!--
+
+ More on django template filters: https://docs.djangoproject.com/en/1.7/ref/templates/builtins/#ref-templates-builtins-filters
+
+ -->
+
+{% extends 'view/base.html' %}
+{% load staticfiles %}
+{% block body %}
+
+<div class="panel panel-default" style="margin-left:10px; margin-right:10px;">
+            <div class="panel-heading" style="font-size:2rem"><a href="{% url 'video_index' %}"
+                <button type="button" class="btn btn-default btn-sm">
+                    <span class="glyphicon glyphicon-step-backward"></span></a>
+                </button>
+                &nbsp;&nbsp;&nbsp;<strong>Utilizador</strong>
+            </div>
+            <div class="panel-body">
+                <ul>
+                    <li>ID: {{item.id}}</li>
+                    <li>Nome: <strong>{{item.name | upper}}</strong></li>
+                    <li>Gênero: {{item.gender}}</li>
+                    <li>Tamanho do agregado familiar: {{item.household_count}}</li>
+                    <li>Estado civil: {{ item.marital_status | default:"Não informado" }}</li>
+                    <li>Cidade: {{item.box.city.name}}</li>
+                    <li>Box-ID: {{item.box.id}}</li>
+                </ul>
+            </div>
+        
+        <div class="panel panel-default"  style="margin-left:10px; margin-right:10px;">
+                <div class="panel-heading" style="font-size:2rem">            
+                        Classificações
+                </div>
+           <div class="panel-body">
+            {% if ratings.count %}
+                    <table class="table table-hover">
+                        <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Título</th>
+                            <th>Pontuação</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for rating in ratings %}
+                        <tr>
+                            <td>{{rating.content.id}}</td>
+                            <td>{{rating.content.title}}</td>
+                            <td>{{rating.rating}}</td>
+                        </tr>
+                        {% endfor %}
+                        </tbody>
+                        <thead>
+                        <tr>
+                            <th></th>
+                            <th>Média</th>
+                            <th>{{mean}}</th>
+                        </tr>
+                        </thead>                        
+                    </table>
+            {% else %}
+               <p>Nenhum dado encontrado!</p>
+            {% endif %}
+                </div>
+        </div>
+
+</div>
+
+
+{% endblock body %}

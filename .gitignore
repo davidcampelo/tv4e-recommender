@@ -4,3 +4,5 @@ test.py
 tv4e_project
 temp/
 **/.ipynb_checkpoints
+rs/migrations/0*.py
+view/migrations/0*.py

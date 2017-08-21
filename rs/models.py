@@ -28,6 +28,10 @@ class Rating(models.Model):
     rating_timestamp = models.DateTimeField(default=datetime.now)
     rating_type = models.CharField(max_length=8, default='explicit')
 
+    @property
+    def content(self):
+        return InformativeVideos.objects.get(pk=self.content_id)
+
     def __str__(self):
         return "user_id: {}, content_id: {}, rating: {}, type: {} rating_timestamp: {}"\
             .format(self.user_id, self.content_id, self.rating, self.rating_type, self.rating_timestamp)

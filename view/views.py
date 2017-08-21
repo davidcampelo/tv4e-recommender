@@ -3,7 +3,10 @@ from django.http import HttpResponse
 from django.views import generic
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 
-from models import Users, Asgie, InformativeVideos, AsgieAvResource
+from django.db.models import Avg
+
+from view.models import Asgie, InformativeVideos, AsgieAvResource
+from rs.models import Senior, Rating
 
 
 def video_index(request):
@@ -74,11 +77,15 @@ class UserIndexView(generic.ListView):
     context_object_name = 'items'
 
     def get_queryset(self):
-        return Users.objects.all()
+        return Senior.objects.all()
 
 
-def user_detail(request, asgie_id):
-    asgie = Asgie.objects.get(id=asgie_id)
-    resources = [aar.av_resource.url for aar in AsgieAvResource.objects.filter(asgie=asgie)]
-    context = {'asgie': asgie, 'resources': resources}
-    return render(request, 'view/asgie_detail.html', context)
+def user_detail(request, user_id):
+    item = Senior.objects.get(id=user_id)
+    ratings = Rating.objects.filter(user_id=user_id)
+    context = {'item': item, 'ratings': ratings} 
+    if len(ratings) > 0:
+        mean = ratings.aggregate(value=Avg('rating'))
+        context['mean'] = round(mean['value'],2)
+    
+    return render(request, 'view/user_detail.html', context)
