@@ -58,7 +58,7 @@ class OfflineContentBasedSimilarity(object):
 		self.__dataframe = pd.DataFrame(data=data[0:,0:], index=data[0:,0], columns=['id', 'title', 'desc', 'asgie_title_pt'])
 		if self.__save_raw_data_to_csv:
 		    logging.debug("Saving raw data to CSV [%s]..." % self.__RAW_DATA_FILENAME)
-		    self.df.to_csv(self.__RAW_DATA_FILENAME, encoding='utf-8', sep=',', index=False)
+		    self.__dataframe.to_csv(self.__RAW_DATA_FILENAME, encoding='utf-8', sep=',', index=False)
 		self.__dataframe['text_contents'] = self.__dataframe[['title', 'desc']].apply(lambda x: " ".join(x), axis=1)
 	  #   if self.__consider_asgie_categories:
 			# df_asgie = pd.DataFrame(None)
