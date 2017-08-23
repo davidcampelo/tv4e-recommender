@@ -89,12 +89,12 @@ LOGGING = {
             'class': 'logging.StreamHandler',
         }
     },
-    'loggers': {
-        'django.db.backends': {
-            'level': 'DEBUG',
-            'handlers': ['console'],
-        }
-    }
+    # 'loggers': {
+    #     'django.db.backends': {
+    #         'level': 'DEBUG',
+    #         'handlers': ['console'],
+    #     }
+    # }
 }
 
 # Database
@@ -152,3 +152,10 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.11/howto/static-files/
 
 STATIC_URL = '/static/'
+
+
+###########################################################################################
+REDIS_URL = 'redis://localhost:6379'
+KEY_CONTENT_SIMILARITY = 'content_similarity'
+KEY_USER_RECOMMENDATION = 'user_recommendation'
+SEPARATOR = ':'

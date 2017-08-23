@@ -3,6 +3,7 @@ from __future__ import unicode_literals
 
 from django.shortcuts import render
 from django.http import HttpResponse, JsonResponse
+from django.conf import settings
 
 from view.models import InformativeVideos
 
@@ -11,12 +12,13 @@ import redis
 def similar_content(request, content_id):
     # XXX Put url in a config file! 
     db = redis.StrictRedis.from_url('redis://localhost:6379')
-    similarities = db.lrange("content_similarity:%s" % content_id, 0, 3)
+    key = "%s%s%s" % (settings.KEY_CONTENT_SIMILARITY, settings.SEPARATOR, content_id)
+    similarities = db.lrange(key, 0, 3)
     print(similarities)
     columns = ['target_id', 'target_img', 'target_title', 'confidence']
     data = []
     for similar in similarities:
-    	similar = similar.split(' ')
+    	similar = similar.split(settings.SEPARATOR)
     	video_id = similar[0]
         video = InformativeVideos.objects.get(pk=video_id)
     	confidence = round(float(similar[1]), 2)

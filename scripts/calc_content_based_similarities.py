@@ -12,6 +12,7 @@ sys.path.insert(0, root_path)
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "tv4e.settings")
 django.setup()
 
+from django.conf import settings
 import pandas as pd
 import numpy as np
 from nltk.corpus import stopwords
@@ -45,11 +46,9 @@ class OfflineContentBasedSimilarity(object):
 		self.__redis = None
 
 
-	def __configure_redis(self):
-		# XXX Put url in a config file!
-		logging.debug("Flushing REDIS DB...")
-		self.__redis = redis.StrictRedis.from_url('redis://localhost:6379')
-		self.__redis.flushdb()
+	def __connect_redis(self):
+		logging.debug("Connecting REDIS DB...")
+		self.__redis = redis.StrictRedis.from_url(settings.REDIS_URL)
 
 	def __load_data(self):
 		"""
@@ -94,15 +93,18 @@ class OfflineContentBasedSimilarity(object):
 		logging.debug("Finding similarities...")
 		n_similar = int((self.__n_similar + 2) * -1)
 		cosine_similarities = linear_kernel(self.__tfidf_matrix, self.__tfidf_matrix)
+
 		i = 0
 		for video_id, row in self.__dataframe.iterrows():
-			# print(row)
 			similar_indices = cosine_similarities[i]
 			similar_indices = similar_indices.argsort()[:n_similar:-1]
 			similar_indices = similar_indices[1:] # the most similar is the item itself, remove it!
 			similar_items = [(self.__dataframe['id'][j], cosine_similarities[i][j]) for j in similar_indices]
+			# update redis db
+			key = "%s%s%s" % (settings.KEY_CONTENT_SIMILARITY, settings.SEPARATOR, row['id'])
+			self.__redis.delete(key)
 			for similar_id, similar_confidence_level in similar_items:
-				self.__redis.rpush("content_similarity:%s" % row['id'], "%s %s" % (similar_id, similar_confidence_level))
+				self.__redis.rpush(key, "%s%s%s" % (similar_id, settings.SEPARATOR, similar_confidence_level))
 				# print("content_similarity: %s =>> %s (%s)" % (row['id'], similar_id, similar_confidence_level))
 			i = i + 1
 
@@ -114,7 +116,7 @@ class OfflineContentBasedSimilarity(object):
 		Load and transform the +TV4E informative contents, train a content-based recommender system and make a recommendation for each video
 		:return:
 		"""
-		self.__configure_redis()
+		self.__connect_redis()
 		self.__load_data()
 		self.__vectorize() 
 		self.__find_and_save_similarities()
@@ -142,20 +144,6 @@ class OfflineContentBasedSimilarity(object):
 		plt.subplots_adjust(right=0.80, top=0.90, left=0.12, bottom=0.12)
 		# Show plot
 		plt.show()
-
-
-	def save_output_to_csv(self):
-		"""
-		Save output DataFrame to csv file
-		:return:
-		"""
-		if (self.__dataframe is not None):
-			logging.debug("Saving out to CSV file [%s]..." % self.__OUTPUT_FILENAME)
-			try:
-				self.df_vectors.to_csv(self.__OUTPUT_FILENAME, encoding='utf-8', sep=',')
-				logging.debug("CSV file [%s] saved!" % self.__OUTPUT_FILENAME)
-			except IOError:
-				logging.warning("Error while trying to save output file to %s!" % self.__OUTPUT_FILENAME)
 
 
 if __name__ == "__main__":

@@ -21,7 +21,7 @@ from rs.models import Senior, Rating
 
 
 
-user_id = Senior.objects.get(pk=1).id # XXX h0h0h0
+user_id = Senior.objects.get(pk=2).id # XXX h0h0h0
 contents = InformativeVideos.objects.all()
 
 content_set = set()
