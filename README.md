@@ -33,6 +33,9 @@ if you are running Anaconda you can also use conda virtual environment instead.
 pip install -r requirements.txt
 ```
 
+### Configure REDIS
+First, make sure you have a local redis instance running. The engine expects to find redis at redis://localhost:6379. For any different configuration please check the tv4e/settings.py file.
+
 ### Create the DB migrations 
 If you have a database running on your machine I would encourage 
 you to connect it, by updating the settings in `tv4_recommender/settings.py` 
