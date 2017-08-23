@@ -22,9 +22,17 @@ Look at the following guide for more details [guide](http://docs.python-guide.or
  
 ```bash
 > cd tv4e-recommender
-> virtualenv tv4e_recommender -p python-2.7
-> source prs/bin/activate
+> virtualenv tv4e_project -p python-2.7
 ```
+To start/open your development environment:
+```
+> source tv4e_project/bin/activate
+```
+To close your development environment:
+```
+> deactivate
+```
+
 
 if you are running Anaconda you can also use conda virtual environment instead.
 ### Get the required packages
