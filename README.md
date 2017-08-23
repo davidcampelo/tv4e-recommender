@@ -1,8 +1,8 @@
 # +TV4E recommender system
 
-The [+TV4E Project](http://socialitv.web.ua.pt/index.php/projects/sponsored-projects/tv4e/) is an interactive television platform which allows automatically the enrichment of television experience with the integration of social contents. In order to achieve a more compelling and personalized approach a system for recommending video contents according to the users' preferences.
+The [+TV4E Project](http://socialitv.web.ua.pt/index.php/projects/sponsored-projects/tv4e/)[1] is an interactive television platform which allows automatically the enrichment of television experience with the integration of social contents. In order to achieve a more compelling and personalized approach a system for recommending video contents according to the users' preferences.
 
-This systsem is still under  development, and so this README is still under construction.
+This system has been developed in the scope of a PhD research [2] in the context of the Doctoral Program of Information and  Communication in Digital Platforms (University of Aveiro, Portugal). It proposes a context aware recommender system (CARS) of informative contents about Assistance  Services  of  General  Interest  for the Elderly (ASGIE), for later exhibition on an Interactive TV (iTV) platform. The motivation of this research is to enhance the TV watching experience and promote seniors’ autonomy, wellbeing and info-inclusion by providing personalized high-valued informative contents. 
 
 # Installation guide:
 
@@ -70,6 +70,7 @@ so you might need to try out 8002 instead.
 ## References
 Please cite +TV4E Project if it helps your research. You can use the following BibTeX entries:
 ```
+[1]
 @article{SILVA2016580,
 	title = "+TV4E: Interactive Television as a Support to Push Information About Social Services to the Elderly",
 	journal = "Procedia Computer Science",
@@ -89,6 +90,7 @@ Please cite +TV4E Project if it helps your research. You can use the following B
 	keywords = "Social Services",
 	keywords = "Public Services"
 }
+[2]
 @inproceedings{Campelo:2017:RPI:3084289.3084292,
 	 author = {Campelo, David and Silva, Telmo and Ferraz de Abreu, Jorge},
 	 title = {Recommending Personalized Informative Contents on iTV},
