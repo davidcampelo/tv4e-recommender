@@ -8,6 +8,40 @@
 {% load staticfiles %}
 {% block body %}
 
+<script>
+        function get_recs(user_id) {
+            url = '/rs/cb/user/' + user_id + '/'
+
+            $.getJSON(url, 
+                function(result) {
+                    result.data.forEach(function(element, index, array) {
+                        image_url = '/static/img/'+  element.target_img
+
+                        rec_div = document.createElement('div')
+                        rec_div.setAttribute('class', "col-sm-3 img-responsive")
+
+                        a = document.createElement('a')
+                        a.setAttribute('href', '/view/video/' + element.target_id)
+
+                        img = document.createElement('img')
+                        img.setAttribute('src', image_url)
+                        img.setAttribute('class',"img-responsive")
+                        a.appendChild(img)
+
+                        span = document.createElement('span')
+                        span.innerHTML = element.target_title
+                        a.appendChild(span)
+
+                        rec_div.appendChild(a)
+
+                        recs = document.getElementById('recommendations')
+                        recs.appendChild(rec_div)
+                        recs.style.visibility = 'visible'
+                    })
+                });
+        }
+
+</script>
 <div class="panel panel-default" style="margin-left:10px; margin-right:10px;">
             <div class="panel-heading" style="font-size:2rem"><a href="{% url 'video_index' %}"
                 <button type="button" class="btn btn-default btn-sm">
@@ -39,6 +73,7 @@
                             <th>ID</th>
                             <th>Título</th>
                             <th>Pontuação</th>
+                            <th></th>
                         </tr>
                         </thead>
                         <tbody>
@@ -46,23 +81,34 @@
                         <tr>
                             <td>{{rating.content.id}}</td>
                             <td>{{rating.content.title}}</td>
-                            <td>{{rating.rating}}</td>
+                            <td>{{rating.rating}} </td>
+                            <td>({{rating.rating_type}})</td>
                         </tr>
                         {% endfor %}
                         </tbody>
-                        <thead>
                         <tr>
-                            <th></th>
-                            <th>Média</th>
-                            <th>{{mean}}</th>
+                            <td></td>
+                            <td><strong>Média</strong></td>
+                            <td><strong>{{mean}}</strong></td>
+                            <td></td>
                         </tr>
-                        </thead>                        
                     </table>
             {% else %}
                <p>Nenhum dado encontrado!</p>
             {% endif %}
                 </div>
         </div>
+        <div class="panel panel-default" style="margin-left:10px; margin-right:10px;">
+            <div class="panel-heading" style="font-size:2rem">            
+                    Recomendações
+            </div>
+            <div class="panel-body" id="recommendations" class="row" style="visibility: hidden">
+                <script>
+                     get_recs('{{ item.id }}')
+                </script>
+            </div>
+        </div>
+
 
 </div>
 

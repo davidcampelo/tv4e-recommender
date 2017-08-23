@@ -10,11 +10,10 @@ from view.models import InformativeVideos
 import redis
 
 def similar_content(request, content_id):
-    # XXX Put url in a config file! 
-    db = redis.StrictRedis.from_url('redis://localhost:6379')
+    db = redis.StrictRedis.from_url(settings.REDIS_URL)
     key = "%s%s%s" % (settings.KEY_CONTENT_SIMILARITY, settings.SEPARATOR, content_id)
     similarities = db.lrange(key, 0, 3)
-    print(similarities)
+
     columns = ['target_id', 'target_img', 'target_title', 'confidence']
     data = []
     for similar in similarities:
@@ -27,4 +26,16 @@ def similar_content(request, content_id):
 
     return JsonResponse(dict(data=list(data)), safe=False)
 
+def user_recommendations(request, user_id): 
+    db = redis.StrictRedis.from_url(settings.REDIS_URL)
+    key = "%s%s%s" % (settings.KEY_USER_RECOMMENDATION, settings.SEPARATOR, user_id)
+    user_recommendations = db.lrange(key, 0, 3)
+    columns = ['target_id', 'target_img', 'target_title']
+    data = []
+    for video_id in user_recommendations:
+        video = InformativeVideos.objects.get(pk=video_id)
+        title = InformativeVideos.objects.values('title').filter(id=video_id)[0]['title']
+        data.append({columns[0]:video_id, columns[1]:video.asgie.image, columns[2]:title})
+
+    return JsonResponse(dict(data=list(data)), safe=False)
 
