@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
-from datetime import datetime
+from django.utils import timezone
 from django.db import models
 
 from view.models import Boxes, InformativeVideos
@@ -25,7 +25,7 @@ class Rating(models.Model):
     user_id = models.IntegerField(null=False)
     content_id = models.IntegerField(null=False)
     rating = models.DecimalField(decimal_places=2, max_digits=4)
-    rating_timestamp = models.DateTimeField(default=datetime.now)
+    rating_timestamp = models.DateTimeField(default=timezone.now())
     rating_type = models.CharField(max_length=8, default='explicit')
 
     @property
