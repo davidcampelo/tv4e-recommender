@@ -32,9 +32,8 @@ To close your development environment:
 ```
 > deactivate
 ```
-
-
 if you are running Anaconda you can also use conda virtual environment instead.
+
 ### Get the required packages
 
 ```bash
@@ -57,7 +56,7 @@ To set up another database is described in the Django docs [here](https://docs.d
 ### Start the web server
  To start the development server run:
 ```bash
-> python manage.py runserver 127.0.0.1:8000
+> python manage.py runserver 127.0.0.1:8001
 ```
 Running the server like this, will make the website available 
 [http://127.0.0.1:8001](http://127.0.0.1:8001) other applications also use this port
@@ -67,4 +66,44 @@ so you might need to try out 8002 instead.
 * when you are finished running the project you can exit the virtual env:
 ```bash
 > deactivate
+```
+## References
+Please cite +TV4E Project if it helps your research. You can use the following BibTeX entries:
+```
+@article{SILVA2016580,
+	title = "+TV4E: Interactive Television as a Support to Push Information About Social Services to the Elderly",
+	journal = "Procedia Computer Science",
+	volume = "100",
+	number = "",
+	pages = "580 - 585",
+	year = "2016",
+	note = "International Conference on ENTERprise Information Systems/International Conference on Project MANagement/International Conference on Health and Social Care Information Systems and Technologies, CENTERIS/ProjMAN / HCist 2016",
+	issn = "1877-0509",
+	doi = "http://dx.doi.org/10.1016/j.procs.2016.09.198",
+	url = "http://www.sciencedirect.com/science/article/pii/S1877050916323663",
+	author = "Telmo Silva and Jorge Abreu and Maria Antunes and Pedro Almeida and Valter Silva and Gonçalo Santinha",
+	keywords = "Seniors",
+	keywords = "iTV",
+	keywords = "Health",
+	keywords = "quality of life",
+	keywords = "Social Services",
+	keywords = "Public Services"
+}
+@inproceedings{Campelo:2017:RPI:3084289.3084292,
+	 author = {Campelo, David and Silva, Telmo and Ferraz de Abreu, Jorge},
+	 title = {Recommending Personalized Informative Contents on iTV},
+	 booktitle = {Adjunct Publication of the 2017 ACM International Conference on Interactive Experiences for TV and Online Video},
+	 series = {TVX '17 Adjunct},
+	 year = {2017},
+	 isbn = {978-1-4503-5023-5},
+	 location = {Hilversum, The Netherlands},
+	 pages = {99--103},
+	 numpages = {5},
+	 url = {http://doi.acm.org/10.1145/3084289.3084292},
+	 doi = {10.1145/3084289.3084292},
+	 acmid = {3084292},
+	 publisher = {ACM},
+	 address = {New York, NY, USA},
+	 keywords = {context-aware, elderly, info-inclusion, interactive tv, recommender systems},
+}
 ```
