@@ -4,7 +4,7 @@ The [+TV4E Project](http://socialitv.web.ua.pt/index.php/projects/sponsored-proj
 
 This system has been developed in the scope of a PhD research [2] in the context of the Doctoral Program of Information and  Communication in Digital Platforms (University of Aveiro, Portugal). It proposes a context aware recommender system (CARS) of informative contents about Assistance  Services  of  General  Interest  for the Elderly (ASGIE), for later exhibition on an Interactive TV (iTV) platform. The motivation of this research is to enhance the TV watching experience and promote seniors’ autonomy, wellbeing and info-inclusion by providing personalized high-valued informative contents. 
 
-# Installation/Configuration guide:
+## Installation/Configuration guide:
 
 System requirements:
 * Ubuntu 14.04
@@ -67,7 +67,7 @@ so you might need to try out 8002 instead.
 ```bash
 > deactivate
 ```
-# References
+## References
 Please cite +TV4E Project if it helps your research. You can use the following BibTeX entries:
 ```
 [1]
