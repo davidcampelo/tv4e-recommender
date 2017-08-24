@@ -21,7 +21,7 @@ from rs.models import Senior, Rating
 
 
 
-user_id = Senior.objects.get(pk=2).id # XXX h0h0h0
+user_id = Senior.objects.get(pk=3).id # XXX h0h0h0
 contents = InformativeVideos.objects.all()
 
 content_set = set()
@@ -31,7 +31,7 @@ while len(content_set) < 20:
     content_id = contents[random_content_index].id
     content_set.add(content_id)
     
-    rating = Rating(user_id=user_id, content_id=content_id, rating=decimal.Decimal(random.uniform(-1, 1)))
+    rating = Rating(user_id=user_id, content_id=content_id, rating=round(decimal.Decimal(random.uniform(0, 1)), 1))
     rating.save()
     print rating
 
