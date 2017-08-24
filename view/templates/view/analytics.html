@@ -3,6 +3,107 @@
 {% block head %}
 
 
+<style>
+    .kpi-box {
+        height: 100px;
+
+    }
+</style>
+<script src="http://d3js.org/d3.v3.js"></script>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+<script src="http://dimplejs.org/dist/dimple.v2.0.0.min.js"></script>
+<script>
+var margin = {top: 20, right: 0, bottom: 30, left: 50},
+    width = 600 - margin.left - margin.right,
+    height = 400 - margin.top - margin.bottom,
+    maxHeight = height - 30,
+    padding = 5;
+
+function getTopContent() {
+  $.getJSON('/rs/analytics/top10/', function(result) {
+    var ul = document.getElementById("top10");
+
+    result.data.forEach(function(element, index, array) {
+      var li = document.createElement("li");
+      var a = document.createElement("a");
+      a.setAttribute('href', "/view/video/" + element.video_id + "/");
+      a.innerHTML= element.video_title + "(média: "  + element.avg_rating + ")"
+
+      li.appendChild(a);
+      li.setAttribute("id",element.content_id);
+      ul.appendChild(li);
+    });
+  })
+}
+
+function drawRatingChart(id) {
+
+  d3.json("/rs/analytics/ratings_distribution", function(error, eventData) {
+   var canvas = d3.select(id)
+            .append("svg")
+            .attr("width", width)
+            .attr("height", height)
+            .append('g')
+            .attr("class", 'chart');
+
+    var myChart = new dimple.chart(canvas, eventData);
+    var x = myChart.addCategoryAxis("x", ["rating"] );
+    myChart.addMeasureAxis("y", "count_items" );
+    myChart.addSeries(null, dimple.plot.bar);
+    myChart.setBounds(30, 30,500, 250);
+    x.addOrderRule("rating");
+    myChart.draw();
+
+    canvas.append("text")
+          .attr("x", myChart._xPixels() + myChart._widthPixels()/2 - 110)
+          .attr("y", myChart._yPixels() - 20)
+          .text("Distribuição das classificações");
+  });
+}
+
+
+
+// function drawChart(id) {
+
+//   d3.json("" function(error, eventData) {
+//    var canvas = d3.select(id)
+//             .append("svg")
+//             .attr("width", width)
+//             .attr("height", height)
+//             .append('g')
+//             .attr("class", 'chart');
+
+//     var myChart = new dimple.chart(canvas, eventData);
+//     var x = myChart.addCategoryAxis("x", ["event","conversion"] );
+//     myChart.addMeasureAxis("y", "count_items" );
+//     myChart.addSeries("conversion", dimple.plot.bar);
+//     myChart.addLegend(110, 30, 110, 20, "right");
+//     myChart.setBounds(30, 30, 180, 130);
+//     myChart.draw();
+
+//     canvas.append("text")
+//           .attr("x", myChart._xPixels() + myChart._widthPixels()/2 -110)
+//           .attr("y", myChart._yPixels() - 20)
+//           .text("Sessions with a buy and without");
+//   });
+// }
+
+
+
+function update_statistics() {
+  var tomorrow = new Date();
+  tomorrow.setDate(tomorrow.getDate() + 1);
+  start_data = tomorrow.toJSON().slice(0,10);
+  $.getJSON('/rs/analytics/get_statistics?date=' + start_data, function(result) {
+    document.getElementById("mean_rating").textContent = result.mean_rating;
+    document.getElementById("active_users").textContent = result.active_users + "%";
+    document.getElementById("videos_rated").textContent = result.videos_rated_distinct;
+    document.getElementById("most_active_user").textContent = result.most_active_user;
+  })
+
+}
+</script>
+
 
 
 {% endblock head %}
@@ -21,6 +122,66 @@
             </table>
         </div>            
         <div class="panel-body">
+
+
+
+
+
+
+
+
+
+
+
+<div class="row" id="statistics">
+    <div class="col-sm-3">
+        <div class="well kpi-box">
+            Quantidade de vídeos avaliados: <br />
+            <result id="videos_rated">0</result>
+        </div>
+    </div>
+    <div class="col-sm-3">
+        <div class="well kpi-box">
+             Quantidade de utilizadores ativos: <br/>
+            <result id="active_users">0</result>
+        </div>
+    </div>
+    <div class="col-sm-3">
+        <div class="well kpi-box">
+            Utilizador mais ativo: <br/>
+            <result id="most_active_user">0</result>
+        </div>
+    </div>
+    <div class="col-sm-3">
+        <div class="well kpi-box">
+            Pontuação média total: <br/>
+            <result id="mean_rating">0</result>
+        </div>
+    </div>
+
+</div>
+<div class="row">
+    <div class="col-sm-6">
+        <list>
+            <p>Top 10 vídeos<p>
+            <ul id="top10"></ul>
+        </list>
+    </div>
+    <div class="col-sm-6">
+        <div id="p2" class="well"></div>
+    </div>
+</div>
+<script type="text/javascript">
+update_statistics();
+//drawChart("#p1");
+drawRatingChart("#p2");
+getTopContent();
+</script>
+
+
+
+
+
 
 
 
