@@ -24,7 +24,7 @@ class Senior(models.Model):
 class Rating(models.Model):
     user_id = models.IntegerField(null=False)
     content_id = models.IntegerField(null=False)
-    rating = models.DecimalField(decimal_places=2, max_digits=4)
+    rating = models.DecimalField(decimal_places=1, max_digits=2)
     rating_timestamp = models.DateTimeField(default=timezone.now())
     rating_type = models.CharField(max_length=8, default='explicit')
 
