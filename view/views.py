@@ -8,7 +8,8 @@ from django.db.models import Avg
 from view.models import Asgie, InformativeVideos, AsgieAvResource
 from rs.models import Senior, Rating
 
-
+# VIDEOS
+###################################################################################################################
 def video_index(request):
 
     paginate_by = 8
@@ -55,6 +56,7 @@ def video_detail(request, video_id):
     return render(request, 'view/video_detail.html', context)
 
 
+# ASGIE
 ###################################################################################################################
 class AsgieIndexView(generic.ListView):
     template_name = 'view/asgie_index.html'
@@ -71,6 +73,7 @@ def asgie_detail(request, asgie_id):
     return render(request, 'view/asgie_detail.html', context)
 
 
+# USERS
 ###################################################################################################################
 class UserIndexView(generic.ListView):
     template_name = 'view/user_index.html'
@@ -89,3 +92,11 @@ def user_detail(request, user_id):
         context['mean'] = round(mean['value'],2)
     
     return render(request, 'view/user_detail.html', context)
+
+
+# ANALYTICS
+###################################################################################################################
+
+def analytics(request):
+    context_dict = {}
+    return render(request, 'view/analytics.html', context_dict)
