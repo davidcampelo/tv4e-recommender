@@ -79,8 +79,8 @@
                         <tbody>
                         {% for rating in ratings %}
                         <tr>
-                            <td>{{rating.content.id}}</td>
-                            <td>{{rating.content.title}}</td>
+                            <td><a href="{% url 'video_detail' rating.content.id %}">{{rating.content.id}}</a></td>
+                            <td><a href="{% url 'video_detail' rating.content.id %}">{{rating.content.title}}</a></td>
                             <td>{{rating.rating}} </td>
                             <td>({{rating.rating_type}})</td>
                         </tr>
