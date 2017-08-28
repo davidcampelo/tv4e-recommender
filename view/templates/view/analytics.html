@@ -56,8 +56,60 @@ function drawRatingChart(id) {
 
     canvas.append("text")
           .attr("x", myChart._xPixels() + myChart._widthPixels()/2 - 110)
-          .attr("y", myChart._yPixels() - 20)
+          .attr("y", myChart._yPixels() - 15)
           .text("Distribuição das classificações");
+  });
+}
+
+function drawDailyEvolution(id) {
+
+  d3.json("/rs/analytics/ratings_dailyevolution", function(error, eventData) {
+   var canvas = d3.select(id)
+            .append("svg")
+            .attr("width", width)
+            .attr("height", height)
+            .append('g')
+            .attr("class", 'chart');
+
+    var myChart = new dimple.chart(canvas, eventData);
+    var x = myChart.addCategoryAxis("x", ["dia"] );
+    myChart.addMeasureAxis("y", "quantidade" );
+    myChart.addSeries(null, dimple.plot.line);
+    // myChart.addMeasureAxis("y", "acumulado" );
+    // myChart.addSeries(null, dimple.plot.bar);
+    myChart.setBounds(30, 30,500, 250);
+    myChart.draw();
+
+    canvas.append("text")
+          .attr("x", myChart._xPixels() + myChart._widthPixels()/2 - 50)
+          .attr("y", myChart._yPixels() - 15)
+          .text("Evolução diária");
+  });
+}
+
+
+function drawWeekday(id) {
+
+  d3.json("/rs/analytics/ratings_weekday", function(error, eventData) {
+   var canvas = d3.select(id)
+            .append("svg")
+            .attr("width", width)
+            .attr("height", height)
+            .append('g')
+            .attr("class", 'chart');
+
+    var myChart = new dimple.chart(canvas, eventData);
+    var x = myChart.addCategoryAxis("x", ["dia da semana"] );
+    x.addOrderRule("dia_da_semana_num");
+    myChart.addMeasureAxis("y", "quantidade" );
+    myChart.addSeries(null, dimple.plot.bar);
+    myChart.setBounds(30, 30,500, 250);
+    myChart.draw();
+
+    canvas.append("text")
+          .attr("x", myChart._xPixels() + myChart._widthPixels()/2 - 70)
+          .attr("y", myChart._yPixels() - 15)
+          .text("Dias da semana");
   });
 }
 
@@ -171,10 +223,24 @@ function update_statistics() {
         <div id="p2" class="well"></div>
     </div>
 </div>
+
+
+<div class="row">
+    <div class="col-sm-6">
+        <div id="p3" class="well"></div>
+    </div>
+    <div class="col-sm-6">
+        <div id="p4" class="well"></div>
+    </div>
+</div>
+
+
 <script type="text/javascript">
 update_statistics();
 //drawChart("#p1");
 drawRatingChart("#p2");
+drawDailyEvolution("#p3")
+drawWeekday("#p4")
 getTopContent();
 </script>
 

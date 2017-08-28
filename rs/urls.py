@@ -13,6 +13,10 @@ urlpatterns = [
     url(r'^analytics/get_statistics', views.get_statistics, name='get statistics'),
     # ex: /rs/analytics/ratings_distribution
     url(r'^analytics/ratings_distribution', views.ratings_distribution, name='ratings_distribution'),
+    # ex: /rs/analytics/ratings_dailyevolution
+    url(r'^analytics/ratings_dailyevolution', views.ratings_dailyevolution, name='ratings_dailyevolution'),
+    # ex: /rs/analytics/ratings_weekday
+    url(r'^analytics/ratings_weekday', views.ratings_weekday, name='ratings_weekday'),
     # ex: /rs/analytics/top10
     url(r'^analytics/top10', views.top10, name='top10'),
 

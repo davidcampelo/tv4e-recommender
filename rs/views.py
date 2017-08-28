@@ -113,6 +113,49 @@ def ratings_distribution(request):
     return JsonResponse(data, safe=False)
 
 
+def ratings_dailyevolution(request):
+    cursor = connection.cursor()
+    cursor.execute("""
+    select day(rating_timestamp) as dia, count(*) as quantidade
+    from rs_rating
+    group by day(rating_timestamp)
+    """)
+    data = dictfetchall(cursor)
+
+    data2 = []
+    acumulado = 0
+    for idx,item in enumerate(data): 
+        acumulado += item['quantidade']
+        print("dia = %s count = %s acumulado = %s" % (item['dia'], item['quantidade'], acumulado))
+        data2.append({'dia': item['dia'], 'quantidade': item['quantidade'], 'acumulado': acumulado})
+
+    # daily = [item['daily'] for item in data]
+    # for i in range(1, len(daily)):
+    #     daily[i] += daily[i-1]
+
+    # data =  []
+    # for idx,item in enumerate(daily):
+    #     data.append({'dia': idx, 'count': item})
+
+    return JsonResponse(data2, safe=False)
+
+
+
+def ratings_weekday(request):
+    cursor = connection.cursor()
+    cursor.execute("""
+    select weekday(rating_timestamp) as dia_da_semana_num, count(*) as quantidade
+    from rs_rating
+    group by weekday(rating_timestamp)
+    """)
+    data = dictfetchall(cursor)
+
+    dias_da_semana = ['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado', 'Domingo']
+    for item in data:
+        item['dia da semana'] = dias_da_semana[item['dia_da_semana_num']][:3]
+
+    return JsonResponse(data, safe=False)
+
 def top10(request):
     top10 = Rating.objects.values('content_id').annotate(avg=Avg('rating')).order_by('-avg')[:10]
     columns = ['video_id', 'video_title', 'avg_rating']
