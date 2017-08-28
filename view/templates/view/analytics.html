@@ -47,11 +47,11 @@ function drawRatingChart(id) {
             .attr("class", 'chart');
 
     var myChart = new dimple.chart(canvas, eventData);
-    var x = myChart.addCategoryAxis("x", ["rating"] );
-    myChart.addMeasureAxis("y", "count_items" );
+    var x = myChart.addCategoryAxis("x", ["classificação"] );
+    myChart.addMeasureAxis("y", "quantidade" );
     myChart.addSeries(null, dimple.plot.bar);
-    myChart.setBounds(30, 30,500, 250);
-    x.addOrderRule("rating");
+    myChart.setBounds(30, 30,490, 250);
+    x.addOrderRule("classificação");
     myChart.draw();
 
     canvas.append("text")
@@ -72,17 +72,22 @@ function drawDailyEvolution(id) {
             .attr("class", 'chart');
 
     var myChart = new dimple.chart(canvas, eventData);
-    var x = myChart.addCategoryAxis("x", ["dia"] );
-    myChart.addMeasureAxis("y", "quantidade" );
-    myChart.addSeries(null, dimple.plot.line);
-    // myChart.addMeasureAxis("y", "acumulado" );
-    // myChart.addSeries(null, dimple.plot.bar);
-    myChart.setBounds(30, 30,500, 250);
+    myChart.setBounds(30, 50,490, 220);
+
+    var x = myChart.addCategoryAxis("x", "dia");
+    var y1 = myChart.addMeasureAxis("y", "quantidade" );
+    var y2 = myChart.addMeasureAxis("y", "acumulado" );
+
+    myChart.addSeries("Diário ", dimple.plot.bar, [x, y1]);
+    myChart.addSeries("Acumulado", dimple.plot.line, [x, y2]);
+
+    myChart.addLegend(450, 15, 110, 20, "left");
+
     myChart.draw();
 
     canvas.append("text")
           .attr("x", myChart._xPixels() + myChart._widthPixels()/2 - 50)
-          .attr("y", myChart._yPixels() - 15)
+          .attr("y", myChart._yPixels() - 35)
           .text("Evolução diária");
   });
 }
@@ -103,7 +108,7 @@ function drawWeekday(id) {
     x.addOrderRule("dia_da_semana_num");
     myChart.addMeasureAxis("y", "quantidade" );
     myChart.addSeries(null, dimple.plot.bar);
-    myChart.setBounds(30, 30,500, 250);
+    myChart.setBounds(30, 30,490, 250);
     myChart.draw();
 
     canvas.append("text")

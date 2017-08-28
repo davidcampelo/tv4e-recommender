@@ -103,10 +103,10 @@ def dictfetchall(cursor):
 def ratings_distribution(request):
     cursor = connection.cursor()
     cursor.execute("""
-    select rating, count(1) as count_items
+    select rating as classificação, count(*) as quantidade
     from rs_rating
-    group by rating
-    order by rating
+    group by classificação
+    order by classificação
     """)
     data = dictfetchall(cursor)
     print(data)
