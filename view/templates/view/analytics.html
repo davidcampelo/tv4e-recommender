@@ -50,6 +50,7 @@ function drawRatingChart(id) {
     var x = myChart.addCategoryAxis("x", ["classificação"] );
     myChart.addMeasureAxis("y", "quantidade" );
     myChart.addSeries(null, dimple.plot.bar);
+    myChart.addSeries(null, dimple.plot.line);
     myChart.setBounds(30, 30,490, 250);
     x.addOrderRule("classificação");
     myChart.draw();
@@ -108,6 +109,7 @@ function drawWeekday(id) {
     x.addOrderRule("dia_da_semana_num");
     myChart.addMeasureAxis("y", "quantidade" );
     myChart.addSeries(null, dimple.plot.bar);
+    myChart.addSeries(null, dimple.plot.line);
     myChart.setBounds(30, 30,490, 250);
     myChart.draw();
 
@@ -153,9 +155,10 @@ function update_statistics() {
   start_data = tomorrow.toJSON().slice(0,10);
   $.getJSON('/rs/analytics/get_statistics?date=' + start_data, function(result) {
     document.getElementById("mean_rating").textContent = result.mean_rating;
-    document.getElementById("active_users").textContent = result.active_users + "%";
-    document.getElementById("videos_rated").textContent = result.videos_rated_distinct;
+    document.getElementById("videos_rated_distinct").textContent = result.videos_rated_distinct;
+    document.getElementById("videos_rated_total").textContent = result.videos_rated_total;
     document.getElementById("most_active_user").textContent = result.most_active_user;
+    document.getElementById("stats_users").textContent = result.n_active_users + "/" + result.n_total_users + " ("+ result.active_users_percent + " %)";
   })
 
 }
@@ -191,27 +194,39 @@ function update_statistics() {
 
 
 <div class="row" id="statistics">
-    <div class="col-sm-3">
+    <div class="col-sm-2">
         <div class="well kpi-box">
-            Quantidade de vídeos avaliados: <br />
-            <result id="videos_rated">0</result>
+             Avaliações: <br/>
+            <result id="videos_rated_total">0</result>
         </div>
     </div>
-    <div class="col-sm-3">
+    <div class="col-sm-2">
         <div class="well kpi-box">
-             Quantidade de utilizadores ativos: <br/>
-            <result id="active_users">0</result>
+            Vídeos avaliados: <br />
+            <result id="videos_rated_distinct">0</result>
         </div>
     </div>
-    <div class="col-sm-3">
+    <div class="col-sm-2">
+        <div class="well kpi-box">
+             <br />
+            <result id=""></result>
+        </div>
+    </div>
+    <div class="col-sm-2">
+        <div class="well kpi-box">
+             Utilizadores ativos: <br/>
+            <result id="stats_users">0</result>
+        </div>
+    </div>
+    <div class="col-sm-2">
         <div class="well kpi-box">
             Utilizador mais ativo: <br/>
             <result id="most_active_user">0</result>
         </div>
     </div>
-    <div class="col-sm-3">
+    <div class="col-sm-2">
         <div class="well kpi-box">
-            Pontuação média total: <br/>
+            Classificação média: <br/>
             <result id="mean_rating">0</result>
         </div>
     </div>

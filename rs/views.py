@@ -57,7 +57,7 @@ def get_statistics(request):
     # number of active users
     n_active_users = Rating.objects.values('user_id').distinct().count()
     n_total_users = Senior.objects.values('id').distinct().count()
-    active_users = round(n_active_users*100/float(n_total_users), 2)
+    active_users_percent = round(n_active_users*100/float(n_total_users), 2)
 
     # mean overall rating 
     mean_rating = round(Rating.objects.aggregate(avg=Avg('rating'))['avg'], 1)
@@ -88,7 +88,9 @@ def get_statistics(request):
          "videos_rated_total": videos_rated_total,
          "mean_rating": mean_rating,
          "most_active_user": most_active_user,
-         "active_users": active_users})
+         "n_active_users" : n_active_users,
+         "n_total_users" : n_total_users,
+         "active_users_percent": active_users_percent})
 
 
 def dictfetchall(cursor):
