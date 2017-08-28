@@ -157,7 +157,7 @@ function update_statistics() {
     document.getElementById("mean_rating").textContent = result.mean_rating;
     document.getElementById("videos_rated_distinct").textContent = result.videos_rated_distinct;
     document.getElementById("videos_rated_total").textContent = result.videos_rated_total;
-    document.getElementById("most_active_user").textContent = result.most_active_user;
+    document.getElementById("most_active_user").textContent = result.most_active_user_name + " (" + result.most_active_user_count + ")";
     document.getElementById("stats_users").textContent = result.n_active_users + "/" + result.n_total_users + " ("+ result.active_users_percent + " %)";
   })
 
@@ -197,13 +197,13 @@ function update_statistics() {
     <div class="col-sm-2">
         <div class="well kpi-box">
              Avaliações: <br/>
-            <result id="videos_rated_total">0</result>
+            <result id="videos_rated_total"></result>
         </div>
     </div>
     <div class="col-sm-2">
         <div class="well kpi-box">
             Vídeos avaliados: <br />
-            <result id="videos_rated_distinct">0</result>
+            <result id="videos_rated_distinct"></result>
         </div>
     </div>
     <div class="col-sm-2">
@@ -215,19 +215,19 @@ function update_statistics() {
     <div class="col-sm-2">
         <div class="well kpi-box">
              Utilizadores ativos: <br/>
-            <result id="stats_users">0</result>
+            <result id="stats_users"></result>
         </div>
     </div>
     <div class="col-sm-2">
         <div class="well kpi-box">
             Utilizador mais ativo: <br/>
-            <result id="most_active_user">0</result>
+            <result id="most_active_user"></result>
         </div>
     </div>
     <div class="col-sm-2">
         <div class="well kpi-box">
             Classificação média: <br/>
-            <result id="mean_rating">0</result>
+            <result id="mean_rating"></result>
         </div>
     </div>
 

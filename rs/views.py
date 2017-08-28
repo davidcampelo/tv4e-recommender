@@ -65,8 +65,10 @@ def get_statistics(request):
     # most active user (max number of ratings)
     # n_max_ratings = Rating.objects.values('user_id').annotate(count=Count('user_id')).aggregate(max=Max('count'))[0]
     ratings_users = Rating.objects.values('user_id').annotate(count=Count('user_id'))
-    user_id = sorted(ratings_users, key=operator.itemgetter('count'))[:-2:-1][0]['user_id']
-    most_active_user = Senior.objects.filter(pk=user_id).values('name')[0]['name']
+    user = sorted(ratings_users, key=operator.itemgetter('count'))[:-2:-1][0]
+    most_active_user_count = user['count']
+    most_active_user_id = user['user_id']
+    most_active_user_name = Senior.objects.filter(pk=most_active_user_id).values('name')[0]['name']
 
     # sessions_with_conversions = Log.objects.filter(created__range=(start_date, end_date), event='buy') \
     #     .values('session_id').distinct()
@@ -87,7 +89,9 @@ def get_statistics(request):
         {"videos_rated_distinct": videos_rated_distinct,
          "videos_rated_total": videos_rated_total,
          "mean_rating": mean_rating,
-         "most_active_user": most_active_user,
+         "most_active_user_id": most_active_user_id,
+         "most_active_user_name": most_active_user_name,
+         "most_active_user_count": most_active_user_count,
          "n_active_users" : n_active_users,
          "n_total_users" : n_total_users,
          "active_users_percent": active_users_percent})
