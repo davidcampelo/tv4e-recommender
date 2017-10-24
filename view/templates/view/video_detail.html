@@ -61,6 +61,7 @@
                     {% endif %}
                     <li>{{video.desc}}</li>
                 </ul>
+                <tt>{{videotokens.tokens}}</tt>
                 <center>
                 <video controls preload=metadata width=720 height=480 poster=‘{{video.av_resource.url}}'>
                 <source src='{{video.av_resource.url}}' type=‘video/mp4'>
