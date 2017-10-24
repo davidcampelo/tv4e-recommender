@@ -36,4 +36,10 @@ class Rating(models.Model):
         return "user_id: {}, content_id: {}, rating: {}, type: {} rating_timestamp: {}"\
             .format(self.user_id, self.content_id, self.rating, self.rating_type, self.rating_timestamp)
 
+class VideoTokens(models.Model):
+    tokens = models.TextField(null=False)
+    video_id = models.IntegerField(null=False)
 
+    def __str__(self):
+        return "video_id: {}, tokens: {}, "\
+            .format(self.video_id, self.tokens)

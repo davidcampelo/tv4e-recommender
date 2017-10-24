@@ -7,6 +7,7 @@ from django.db.models import Avg
 
 from view.models import Asgie, InformativeVideos, AsgieAvResource
 from rs.models import Senior, Rating
+from rs.models import VideoTokens
 
 # VIDEOS
 ###################################################################################################################
@@ -52,7 +53,9 @@ def video_index(request):
 
 def video_detail(request, video_id):
     video = InformativeVideos.objects.get(id=video_id)
-    context = {'video': video}
+    videotokens = VideoTokens.objects.filter(video_id=video_id)
+    print(videotokens[0].tokens)
+    context = {'video': video, 'videotokens' : videotokens[0]}
     return render(request, 'view/video_detail.html', context)
 
 
