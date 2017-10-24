@@ -21,7 +21,7 @@ def similar_content(request, content_id):
     columns = ['target_id', 'target_img', 'target_title', 'confidence']
     data = []
     for similar in similarities:
-        similar = similar.split(settings.SEPARATOR)
+        similar = similar.decode('utf-8').split(settings.SEPARATOR)
         video_id = similar[0]
         video = InformativeVideos.objects.get(pk=video_id)
         confidence = round(float(similar[1]), 2)
