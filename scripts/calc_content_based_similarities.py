@@ -26,6 +26,7 @@ from sklearn.metrics.pairwise import linear_kernel
 from sklearn.decomposition import TruncatedSVD	
 
 from view.models import Asgie, InformativeVideos, AsgieAvResource
+from rs.models import Senior, Rating, VideoTokens
 
 logging.basicConfig(format='[%(asctime)s] %(levelname)s - %(message)s', level=logging.DEBUG)
 
@@ -81,6 +82,21 @@ class OfflineContentBasedSimilarity(object):
 		logging.debug("Vectorizing text contents...")
 		tfidf = TfidfVectorizer(analyzer='word', ngram_range=(1, 2), min_df=2, max_df=0.5, stop_words=stopwords.words('portuguese'))
 		self.__tfidf_matrix = tfidf.fit_transform(self.__dataframe['text_contents'])
+		vectors = self.__tfidf_matrix.toarray()
+
+		i = 0		
+		for video_id, row in self.__dataframe.iterrows():
+			tokens = ", ".join(tfidf.inverse_transform(vectors[i])[0])
+			video_id = row['id']
+			i += 1
+
+			videotokens = VideoTokens.objects.filter(video_id=video_id)
+			if videotokens.count() == 0:
+				videotokens = VideoTokens(video_id=video_id, tokens=tokens)
+				videotokens.save()
+			else:
+				videotokens[0].tokens = tokens
+				videotokens[0].save()
 
 		logging.debug("Number of features found: %s" % len(tfidf.vocabulary_))
 

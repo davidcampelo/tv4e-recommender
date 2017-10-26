@@ -69,7 +69,7 @@ class OfflineContentBasedSimilarity(object):
 		self.__dataframe['video_contents'] = self.__dataframe[['video_title', 'video_desc']].apply(lambda x: " ".join(x), axis=1)
 	  #   if self.__consider_asgie_categories:
 			# df_asgie = pd.DataFrame(None)
-			# df_asgie['video_asgie_title_pt'] = self.__dataframe['video_asgie_title_pt']
+			# df_asgie['asgie_title_pt'] = self.__dataframe['video_asgie_title_pt']
 			# dummies = pd.get_dummies(df_asgie).astype(int)
 			# self.__dataframe = np.concatenate((self.X_text_contents, dummies), axis=1)
 
