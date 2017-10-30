@@ -37,6 +37,8 @@ class LocalRedisConnector(object):
             for similar_id, similar_confidence_level in similar_items:
                 # print("content_similarity: %s =>> %s (%s)" % (video_id, similar_id, similar_confidence_level))
                 self.__redis.rpush(key, "%s%s%s" % (similar_id, settings.SEPARATOR, similar_confidence_level))
+                # if float(similar_confidence_level) > 0.9:
+                    # print("\nid1={} >> id2={} confidence={}\n\n\n".format(similar_id, video_id, similar_confidence_level) )
         logging.debug("Content similarities saved! n=%d..." % len(dictionary_similarities))
 
 
@@ -61,12 +63,28 @@ class TV4EDataConnector(object):
         self.__dataframe_ratings = None
         self.__dataframe_users = None
 
-    def load_videos(self):
+    def load_users(self):
         """
         Loads the DataFrame with contents. 
-        :return: DataFrame with id, title and desc of items
+        :return: DataFrame with user_id, user_age, user_gender, city_id and user_coordinates
         """
-        logging.debug("Loading data...")
+        logging.debug("Loading users data...")
+
+        # loading videos
+        data=requests.get(self.__URL_USERS)
+        self.__dataframe_users=pd.DataFrame(data.json())
+
+        logging.debug("Users data loaded! n=%s" % self.__dataframe_users.shape[0])
+
+        return self.__dataframe_users
+
+    def load_videos(self):
+        """
+        Loads the DataFrame with contents.
+        :return: DataFrame with video_id, video_title, video_desc, video_date_creation, video_location,
+                 video_asgie_id and video_asgie_title_pt
+        """
+        logging.debug("Loading videos data...")
 
         # loading videos
         data=requests.get(self.__URL_VIDEOS)
@@ -86,9 +104,10 @@ class TV4EDataConnector(object):
     def load_ratings(self):
         """
         Loads the DataFrame with contents. 
-        :return: DataFrame with id, title and desc of items
+        :return: DataFrame with user_id, video_id, video_watch_time, rating_date_creation, rating_value,
+                 video_watched_type
         """
-        logging.debug("Loading ratings...")
+        logging.debug("Loading ratings data...")
 
         # loading ratings
         data=requests.get(self.__URL_RATINGS)
