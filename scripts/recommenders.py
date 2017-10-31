@@ -2,33 +2,66 @@
 import logging
 import pandas as pd
 import numpy as np
-import requests
 from nltk.corpus import stopwords
 import seaborn as sns
 import matplotlib.pyplot as plt
-import operator
 from math import *
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import linear_kernel
-from sklearn.decomposition import TruncatedSVD    
+from sklearn.decomposition import TruncatedSVD
+import datetime
+import dateutil
 
 logging.basicConfig(format='[%(asctime)s] %(levelname)s - %(message)s', level=logging.DEBUG)
 
-class GeographicRecommender(object):
+NUMBER_OF_RECOMMENDATIONS = 10
+
+class GeographicFilter(object):
 
     def __init__(self, dataframe_videos):
         self.__dataframe_videos = dataframe_videos
 
     def filter(self, city_id):
+        logging.debug("Filtering geographically relevant contents city_id={}".format(city_id))
         return \
-            self.__dataframe_videos[(self.__dataframe_videos['video_location'] == city_id) |
-                                    (self.__dataframe_videos['video_location'] == '' )]
+            self.__dataframe_videos[(self.__dataframe_videos['video_location'] == str(city_id)) |
+                                    (self.__dataframe_videos['video_location'] == '')]
+
+
+class TimeDecayFilter(object):
+
+    def __init__(self, dataframe_videos):
+        self.__dataframe_videos = dataframe_videos
+        pd.to_datetime(self.__dataframe_videos.video_date_creation)
+        self.__dataframe_videos=self.__dataframe_videos.sort_values(['video_date_creation'])
+        self.__NOW = datetime.datetime.now()
+
+    def filter(self, user_id, user_recommendations, n_recommendations=int(NUMBER_OF_RECOMMENDATIONS/2)):
+        logging.debug("Filtering time decay recommendations for user_id={} n_recommendations={}".format(user_id, n_recommendations))
+        if user_recommendations is None:
+            filtered_recommendations = [(row.video_id, row.video_date_creation, "")
+                                        for index,row in self.__dataframe_videos[:-n_recommendations-1:-1].iterrows()]
+            return filtered_recommendations
+        else:
+            # Apply time decay algorithm to the list
+            filtered_recommendations = []
+            for item in user_recommendations:
+                timedelta = self.__NOW - dateutil.parser.parse(item[1])
+                filtered_recommendations.append((
+                    item[0],
+                    item[1],
+                    item[2]/(1 + timedelta.days)
+                ))
+
+            # Order again by the confidence
+            return sorted(filtered_recommendations, key=lambda tup: tup[2], reverse=True)[:n_recommendations+1]
+
 
 class ContentBasedRecommender(object):
 
     __NUMBER_OF_ASGIE_TYPES = 7
 
-    def __init__(self, n_similar=10, dataframe_videos):
+    def __init__(self, n_similar=NUMBER_OF_RECOMMENDATIONS, dataframe_videos=None):
         self.__n_similar = n_similar
         self.__dataframe_videos = dataframe_videos
 
@@ -75,12 +108,14 @@ class ContentBasedRecommender(object):
         dictionary_similarities = {}
         i = 0
         for index, row in self.__dataframe_videos.iterrows():
-            print("\nrow.video_id = %s" % row.video_id)
-            print("    row.video_title: %s" % row.video_title)
-            similar_indices = cosine_similarities[i].argsort()[:-5:-1]
+            # print("\nrow.video_id = %s" % row.video_id)
+            # print("    row.video_title: %s" % row.video_title)
+            similar_indices = cosine_similarities[i].argsort()[:-n_similar:-1]
             similar_indices = similar_indices[1:]
-            similar_items = [(self.__dataframe_videos.iloc[j].video_id, cosine_similarities[i][j]) for j in similar_indices]
-            print("    similar_items = %s" % similar_items)
+            similar_items = [(self.__dataframe_videos.iloc[j].video_id,
+                              self.__dataframe_videos.iloc[j].video_date_creation,
+                              cosine_similarities[i][j]) for j in similar_indices]
+            # print("    similar_items = %s" % similar_items)
 
             dictionary_similarities[row.video_id] = similar_items
             i = i + 1
@@ -122,13 +157,15 @@ class ContentBasedRecommender(object):
         #   user's rating."
         #   See: http://eugenelin89.github.io/recommender_content_based/
         user_profile = [0] * len(self.__tfidf_vectorizer.get_feature_names())
-        logging.debug("Calculating user profile for user id=%s n_ratings=%s..." % (user_id, user_ratings.shape[0]))
+        logging.debug("Calculating content-based user profile for user_id={} n_ratings={}".format(user_id, user_ratings.shape[0]))
         for i in range(len(user_profile)):
             for idx, row in user_ratings.iterrows():
                 # print('i = %s rating = %s video_id = %s' % (i, row.overall_rating_value, row.video_id))
                 # print('tokens = %s' % self.__tfidf_tokens_dict[row.video_id])
-                user_profile[i] += row.overall_rating_value * self.__tfidf_tokens_dict[row.video_id][i]
-            # user_profile = [v/len(user_ratings) for v in user_profile] # weight-ing user vector (?)
+                w1 = float(row.overall_rating_value)
+                w2 = float(self.__tfidf_tokens_dict[row.video_id][i])
+                user_profile[i] += w1 * w2
+                # user_profile = [v/len(user_ratings) for v in user_profile] # weight-ing user vector (?)
         # normalize user profile vector
         user_profile = user_profile / np.linalg.norm(user_profile)
         return user_profile
@@ -142,15 +179,28 @@ class ContentBasedRecommender(object):
         denominator = square_rooted(x) * square_rooted(y)
         return numerator/float(denominator)
 
-    def calculate_recommendations(self, user_id, user_ratings):
+    def calculate_recommendations(self, user_id, dataframe_user_ratings):
         # apply cosine similarity between user profile vector and content vectors
         # See: http://eugenelin89.github.io/recommender_content_based/
+        logging.debug("Calculating content-based recommendations for user_id={} n_similar={} n_ratings={}".
+              format(user_id, self.__n_similar, dataframe_user_ratings.shape[0]))
+        if dataframe_user_ratings.shape[0] == 0:
+            logging.warning("No ratings found for user_id={}".format(user_id))
+            return None
+
         n_similar = (self.__n_similar + 1)
-        user_profile = self.__calculate_user_profile(user_id, user_ratings)
+        user_profile = self.__calculate_user_profile(user_id, dataframe_user_ratings)
         # calculate similarity using cosine
-        estimated_user_ratings = {}
+        user_recommendations = []
         for video_id, token_weights in self.__tfidf_tokens_dict.items():
-            if video_id not in user_ratings.video_id.values: # not calculating for contents already consumed
-                estimated_user_ratings[video_id] = self.__cosine_similarity(user_profile, token_weights)
-        # order ratings
-        estimated_user_ratings = sorted(estimated_user_ratings.items(), key=operator.itemgetter(1))[:-n_similar:-1]
+            # not calculating for contents already consumed
+            if video_id not in dataframe_user_ratings.video_id.values:
+                user_recommendations.append((
+                    video_id,
+                    self.__dataframe_videos[(self.__dataframe_videos['video_id'] == video_id)].video_date_creation[0],
+                    self.__cosine_similarity(user_profile, token_weights)
+                ))
+        # order ratings by similarity
+        user_recommendations = sorted(user_recommendations, key=lambda tup: tup[2], reverse=True)[:n_similar]
+
+        return user_recommendations

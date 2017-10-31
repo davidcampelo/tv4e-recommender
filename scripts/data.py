@@ -1,20 +1,5 @@
 # encoding: utf-8
 import logging
-import django
-
-# XXX work around to run this script in a sub-directory of the project (/scripts)
-import os
-import sys
-
-# XXX work-around to use django libs called in a shell cmd
-root_path = os.path.abspath(os.path.split(__file__)[0])
-sys.path.insert(0, os.path.join(root_path, '../'))
-sys.path.insert(0, root_path)
-
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "tv4e.settings")
-django.setup()
-
-from django.conf import settings
 import pandas as pd
 import requests
 import redis
@@ -22,33 +7,32 @@ import redis
 logging.basicConfig(format='[%(asctime)s] %(levelname)s - %(message)s', level=logging.DEBUG)
 
 
-class LocalRedisConnector(object):
+class RedisConnector(object):
 
-    def __init__(self):
+    def __init__(self, url):
         logging.debug("Connecting REDIS DB...")
-        self.__redis = redis.StrictRedis.from_url(settings.REDIS_URL)
+        self.__redis = redis.StrictRedis.from_url(url)
 
-    def save_video_similarities(self, dictionary_similarities):
+    def save_video_similarities(self, dictionary_similarities, key, separator):
         # update redis db
         logging.debug("Saving content similarities...")
         for video_id, similar_items in dictionary_similarities.items():
-            key = "%s%s%s" % (settings.KEY_CONTENT_SIMILARITY, settings.SEPARATOR, video_id)
+            key = "%s%s%s" % (key, separator, video_id)
             self.__redis.delete(key)
             for similar_id, similar_confidence_level in similar_items:
                 # print("content_similarity: %s =>> %s (%s)" % (video_id, similar_id, similar_confidence_level))
-                self.__redis.rpush(key, "%s%s%s" % (similar_id, settings.SEPARATOR, similar_confidence_level))
+                self.__redis.rpush(key, "%s%s%s" % (similar_id, separator, similar_confidence_level))
                 # if float(similar_confidence_level) > 0.9:
                     # print("\nid1={} >> id2={} confidence={}\n\n\n".format(similar_id, video_id, similar_confidence_level) )
         logging.debug("Content similarities saved! n=%d..." % len(dictionary_similarities))
 
-
-    def save_user_recommendations(self, dictionary_user_ratings):
-        logging.debug("Saving user ratings...")
-        for user_id, estimated_user_ratings in dictionary_user_ratings.items():
-            key = "%s%s%s" % (settings.KEY_USER_RECOMMENDATION, settings.SEPARATOR, user_id)
-            self.__redis.delete(key)
-            for video_id, similarity in estimated_user_ratings:
-                self.__redis.rpush(key, video_id)
+    def save_user_recommendations(self, user_id, user_recommendations, key, separator):
+        key = "%s%s%s" % (key, separator, user_id)
+        logging.debug("Saving user recomendations user_id={} n_recommendations={} key={}".format(user_id, len(user_recommendations), key))
+        self.__redis.delete(key)
+        for item in user_recommendations:
+            # item[0] == video_id
+            self.__redis.rpush(key, item[0])
 
 
 class TV4EDataConnector(object):
