@@ -2,6 +2,7 @@
 import logging
 import pandas as pd
 import numpy as np
+import nltk
 from nltk.corpus import stopwords
 import seaborn as sns
 import matplotlib.pyplot as plt
@@ -69,7 +70,6 @@ class ContentBasedRecommender(object):
         self.__tfidf_matrix = None
         self.__tfidf_tokens_dict = None
 
-
     def __create_tfidf_tokens_dict(self):
         # create dict content_id ==>> tfidf weights
         self.__tfidf_tokens_dict = {}
@@ -85,6 +85,7 @@ class ContentBasedRecommender(object):
         :return: Result is a numeric and weighted feature vector notation for each item
         """
         logging.debug("Vectorizing text contents...")
+        nltk.download("stopwords")
         self.__tfidf_vectorizer = TfidfVectorizer(analyzer='word', ngram_range=(1, 2), min_df=2, max_df=0.5,
                                                   stop_words=stopwords.words('portuguese'))
         self.__tfidf_matrix = self.__tfidf_vectorizer.fit_transform(self.__dataframe_videos['video_contents'])
