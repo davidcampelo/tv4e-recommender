@@ -27,12 +27,15 @@ class Updater(object):
 
         content_based_rec = ContentBasedRecommender(n_similar=settings.NUMBER_OF_RECOMMENDATIONS,
                                                     dataframe_videos=dataframe_videos)
+        content_based_rec.save_video_tokens()
         dictionary_similarities = content_based_rec.find_similarities()
         redis.save_video_similarities(
             dictionary_similarities=dictionary_similarities,
             default_key=settings.KEY_CONTENT_SIMILARITY,
             separator=settings.SEPARATOR
         )
+
+        content_based_rec.visualize_data()
 
     @staticmethod
     def update_recommendations():
@@ -42,10 +45,6 @@ class Updater(object):
         dataframe_ratings = tv4e_connector.load_ratings()
         dataframe_users = tv4e_connector.load_users()
 
-        # content_based_rec = ContentBasedRecommendations(dataframe_videos=dataframe_videos)
-        # dictionary_similarities = content_based_rec.find_similarities()
-        # LocalRedisConnector().save_video_similarities(dictionary_similarities)
-
         locations = dataframe_users.city_id.unique()
         for location_id in locations:
             # Filter geographically relevant videos
@@ -53,7 +52,7 @@ class Updater(object):
             dataframe_videos_filtered = geo_filter.filter(location_id)
 
             # Creating a content-based recommender
-            content_based_rec = ContentBasedRecommender(n_similar=settings.NUMBER_OF_RECOMMENDATIONS,
+            content_based_rec = ContentBasedRecommender(n_similar=settings.NUMBER_OF_RECOMMENDATIONS*2,
                                                         dataframe_videos=dataframe_videos_filtered)
             content_based_rec.find_similarities()
             time_filter = TimeDecayFilter(dataframe_videos=dataframe_videos_filtered)
@@ -66,7 +65,7 @@ class Updater(object):
                 user_recommendations = content_based_rec.calculate_recommendations(user_id, dataframe_user_ratings)
 
                 # Apply the time decay
-                user_recommendations = time_filter.filter(n_recommendations=int(settings.NUMBER_OF_RECOMMENDATIONS / 2),
+                user_recommendations = time_filter.filter(n_recommendations=settings.NUMBER_OF_RECOMMENDATIONS,
                                                           user_id=user_id,
                                                           user_recommendations=user_recommendations)
 
@@ -75,10 +74,8 @@ class Updater(object):
                                                 default_key=settings.KEY_USER_RECOMMENDATION,
                                                 separator=settings.SEPARATOR,
                                                 user_recommendations=user_recommendations)
-                break
-            break
 
 
 if __name__ == "__main__":
     Updater().update_tv4e_data()
-    # Updater().update_recommendations()
+    Updater().update_recommendations()

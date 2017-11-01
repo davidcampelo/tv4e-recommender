@@ -13,6 +13,8 @@ from sklearn.decomposition import TruncatedSVD
 import datetime
 import dateutil
 
+from majordomo.models import Video
+
 logging.basicConfig(format='[%(asctime)s] %(levelname)s - %(message)s', level=logging.DEBUG)
 
 NUMBER_OF_RECOMMENDATIONS = 10
@@ -56,7 +58,7 @@ class TimeDecayFilter(object):
                 ))
 
             # Order again by the confidence
-            return sorted(filtered_recommendations, key=lambda tup: tup[2], reverse=True)[:n_recommendations+1]
+            return sorted(filtered_recommendations, key=lambda tup: tup[2], reverse=True)[:n_recommendations]
 
 
 class ContentBasedRecommender(object):
@@ -94,6 +96,23 @@ class ContentBasedRecommender(object):
         self.__create_tfidf_tokens_dict()
 
         logging.debug("Content features loaded! n=%s" % len(self.__tfidf_vectorizer.vocabulary_))
+
+    def save_video_tokens(self):
+        """
+        Store video tokens in databadse
+        """
+        if self.__tfidf_matrix is None:
+            self.__vectorize()
+
+        logging.debug("Saving video tokens...")
+
+        vectors = self.__tfidf_matrix.toarray()
+        i = 0
+        for video_id, row in self.__dataframe_videos.iterrows():
+            video = Video.objects.get(pk=row.video_id)
+            video.tokens = ", ".join(self.__tfidf_vectorizer.inverse_transform(vectors[i])[0])
+            i = i+1
+            video.save()
 
     def find_similarities(self):
         """

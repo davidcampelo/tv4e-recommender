@@ -6,8 +6,6 @@ import redis
 import dateutil
 import pytz
 
-from django.conf import settings
-
 from majordomo.models import User,Asgie,Video,Rating
 
 logging.basicConfig(format='[%(asctime)s] %(levelname)s - %(message)s', level=logging.DEBUG)
@@ -34,7 +32,7 @@ class RedisConnector(object):
 
     def save_user_recommendations(self, user_id, user_recommendations, default_key, separator):
         key = "%s%s%s" % (default_key, separator, user_id)
-        logging.debug("Saving user recomendations user_id={} n_recommendations={} key={}".format(user_id, len(user_recommendations), key))
+        logging.debug("Saving user recommendations user_id={} n_recommendations={} key={}".format(user_id, len(user_recommendations), key))
         self.__redis.delete(key)
         for item in user_recommendations:
             # item[0] == video_id

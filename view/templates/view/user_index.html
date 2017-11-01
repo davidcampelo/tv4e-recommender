@@ -23,7 +23,7 @@
         <div class="panel-body">
             <ul>
                 {% for item in items %}
-                <li><a href="{% url 'user_detail' item.id %}">{{item.id}} - {{item.name}}</a></li>
+                <li><a href="{% url 'user_detail' item.id %}">{{item.id}} - {{item.name| default:"Não informado"}}</a></li>
                 {% endfor %}
             </ul>
         </div>

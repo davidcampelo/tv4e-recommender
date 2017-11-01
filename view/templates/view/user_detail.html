@@ -10,18 +10,18 @@
 
 <script>
         function get_recs(user_id) {
-            url = '/rs/cb/user/' + user_id + '/'
+            url = '/majordomo/user_recommendations/' + user_id + '/'
 
             $.getJSON(url, 
                 function(result) {
                     result.data.forEach(function(element, index, array) {
-                        image_url = '/static/img/'+  element.target_img
+                        image_url = '/static/img/'+  element.asgie_image
 
                         rec_div = document.createElement('div')
                         rec_div.setAttribute('class', "col-sm-3 img-responsive")
 
                         a = document.createElement('a')
-                        a.setAttribute('href', '/view/video/' + element.target_id)
+                        a.setAttribute('href', '/view/video/' + element.video_id)
 
                         img = document.createElement('img')
                         img.setAttribute('src', image_url)
@@ -29,7 +29,7 @@
                         a.appendChild(img)
 
                         span = document.createElement('span')
-                        span.innerHTML = element.target_title
+                        span.innerHTML = element.video_title
                         a.appendChild(span)
 
                         rec_div.appendChild(a)
@@ -52,12 +52,9 @@
             <div class="panel-body">
                 <ul>
                     <li>ID: {{item.id}}</li>
-                    <li>Nome: <strong>{{item.name | upper}}</strong></li>
-                    <li>Gênero: {{item.gender}}</li>
-                    <li>Tamanho do agregado familiar: {{item.household_count}}</li>
+                    <li>Nome: <strong>{{item.name | default:"Não informado" | upper}}</strong></li>
                     <li>Estado civil: {{ item.marital_status | default:"Não informado" }}</li>
-                    <li>Cidade: {{item.box.city.name}}</li>
-                    <li>Box-ID: {{item.box.id}}</li>
+                    <li>Cidade: {{item.city_id}}</li>
                 </ul>
             </div>
         
@@ -79,10 +76,10 @@
                         <tbody>
                         {% for rating in ratings %}
                         <tr>
-                            <td><a href="{% url 'video_detail' rating.content.id %}">{{rating.content.id}}</a></td>
-                            <td><a href="{% url 'video_detail' rating.content.id %}">{{rating.content.title}}</a></td>
-                            <td>{{rating.rating}} </td>
-                            <td>({{rating.rating_type}})</td>
+                            <td><a href="{% url 'video_detail' rating.video.id %}">{{rating.video.id}}</a></td>
+                            <td><a href="{% url 'video_detail' rating.video.id %}">{{rating.video.title}}</a></td>
+                            <td>{{rating.overall_rating_value|floatformat:"3"}} </td>
+                            <td>({{rating.watched_type}})</td>
                         </tr>
                         {% endfor %}
                         </tbody>

@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
-from django.utils import timezone
 from django.db import models
 
 
@@ -14,6 +13,7 @@ class Asgie(models.Model):
     def __str__(self):
         return '[{}] {}'.format(self.id, self.title)
 
+
 class User(models.Model):
     id = models.IntegerField(primary_key=True)
     name = models.CharField(max_length=255)
@@ -25,6 +25,7 @@ class User(models.Model):
     def __str__(self):
         return "id: {}, name: {}, age: {}, gender: {}, city_id: {}, coordinates: {}"\
             .format(self.id, self.name, self.age, self.gender, self.city_id, self.coordinates)
+
 
 class Video(models.Model):
     id = models.IntegerField(primary_key=True)

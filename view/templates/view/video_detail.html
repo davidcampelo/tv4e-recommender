@@ -11,18 +11,18 @@
 
 <script>
         function get_similar(content_id) {
-            url = '/rs/cb/content/' + content_id + '/'
+            url = '/majordomo/similar_content/' + content_id + '/'
 
             $.getJSON(url, 
                 function(result) {
                     result.data.forEach(function(element, index, array) {
-                        image_url = '/static/img/'+  element.target_img
+                        image_url = '/static/img/'+  element.asgie_image
 
                         rec_div = document.createElement('div')
                         rec_div.setAttribute('class', "col-sm-3 img-responsive")
 
                         a = document.createElement('a')
-                        a.setAttribute('href', '/view/video/' + element.target_id)
+                        a.setAttribute('href', '/view/video/' + element.video_id)
 
                         img = document.createElement('img')
                         img.setAttribute('src', image_url)
@@ -54,20 +54,12 @@
                 <ul>
                     <li><strong>Título: {{video.id}} - {{video.title}}</strong></li>
                     <li>URL: <a href="{{video.av_resource.url}}">{{video.av_resource.url}}</a></li>
-                    {% if video.information_source %}
-                    <li>ASGIE: {{video.information_source.asgie.title_pt}}</li>
-                    {% else %}
-                    <li>ASGIE: {{video.information_sources_sub.information_source.asgie.title_pt}}</li>
-                    {% endif %}
-                    <li>{{video.desc}}</li>
+                    <li>ASGIE: {{video.asgie.title_pt}}</li>
+                    <li>Texto:</li>
+                    <p>{{video.desc}}</p>
+                    <li>Tokens:</li>
+                    <p>{{video.tokens | default:"Não informado"}}</p>
                 </ul>
-                <tt>{{videotokens.tokens}}</tt>
-                <center>
-                <video controls preload=metadata width=720 height=480 poster=‘{{video.av_resource.url}}'>
-                <source src='{{video.av_resource.url}}' type=‘video/mp4'>
-                <p>Please use a modern browser to view this video.</p>
-                </video>
-            </center>
             </div>
             <div class="panel panel-default" style="margin-left:10px; margin-right:10px;">
                 <div class="panel-heading" style="font-size:2rem">            
