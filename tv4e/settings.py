@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'view',
     'rs',
+    'majordomo',
 ]
 
 MIDDLEWARE = [
@@ -89,12 +90,12 @@ LOGGING = {
             'class': 'logging.StreamHandler',
         }
     },
-    'loggers': {
-        'django.db.backends': {
-            'level': 'DEBUG',
-            'handlers': ['console'],
-        }
-    }
+    # 'loggers': {
+    #     'django.db.backends': {
+    #         'level': 'DEBUG',
+    #         'handlers': ['console'],
+    #     }
+    # }
 }
 
 # Database
@@ -155,7 +156,10 @@ STATIC_URL = '/static/'
 
 
 ###########################################################################################
+## GLOBAL CONSTANTS #######################################################################
+###########################################################################################
 REDIS_URL = 'redis://localhost:6379'
 KEY_CONTENT_SIMILARITY = 'content_similarity'
 KEY_USER_RECOMMENDATION = 'user_recommendation'
 SEPARATOR = ':'
+NUMBER_OF_RECOMMENDATIONS = 10
