@@ -3,6 +3,11 @@ from __future__ import unicode_literals
 from django.db import models
 
 
+class City(models.Model):
+    id = models.IntegerField(primary_key=True)
+    name = models.CharField(max_length=200)
+
+
 class Asgie(models.Model):
     id = models.IntegerField(primary_key=True)
     title = models.CharField(unique=True, max_length=250)
@@ -19,12 +24,12 @@ class User(models.Model):
     name = models.CharField(max_length=255)
     age = models.IntegerField(null=False)
     gender = models.CharField(max_length=1, null=False) # M / F
-    city_id = models.IntegerField(null=False)
+    city = models.ForeignKey(City, null=False)
     coordinates = models.CharField(max_length=255, null=True)
 
     def __str__(self):
-        return "id: {}, name: {}, age: {}, gender: {}, city_id: {}, coordinates: {}"\
-            .format(self.id, self.name, self.age, self.gender, self.city_id, self.coordinates)
+        return "id: {}, name: {}, age: {}, gender: {}, coordinates: {}"\
+            .format(self.id, self.name, self.age, self.gender, self.coordinates)
 
 
 class Video(models.Model):

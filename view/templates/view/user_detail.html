@@ -53,8 +53,8 @@
                 <ul>
                     <li>ID: {{item.id}}</li>
                     <li>Nome: <strong>{{item.name | default:"Não informado" | upper}}</strong></li>
-                    <li>Estado civil: {{ item.marital_status | default:"Não informado" }}</li>
-                    <li>Cidade: {{item.city_id}}</li>
+                    <li>Género: {{ item.gender | default:"Não informado" }}</li>
+                    <li>Cidade: {{item.city.id}} - {{item.city.name}}</li>
                 </ul>
             </div>
         

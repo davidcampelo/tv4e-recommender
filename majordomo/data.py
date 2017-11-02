@@ -6,7 +6,7 @@ import redis
 import dateutil
 import pytz
 
-from majordomo.models import User,Asgie,Video,Rating
+from majordomo.models import City,User,Asgie,Video,Rating
 
 logging.basicConfig(format='[%(asctime)s] %(levelname)s - %(message)s', level=logging.DEBUG)
 
@@ -69,8 +69,8 @@ class TV4EDataConnector(object):
                         id=row.user_id,
                         age=row.user_age,
                         gender=row.user_gender,
-                        city_id=row.city_id,
-                        coordinates = row.user_coordinates,
+                        city=City.objects.only('id').get(id=row.city_id),
+                        coordinates=row.user_coordinates,
                     )
                     user.save()
         logging.debug("Users data loaded! n=%s" % self.__dataframe_users.shape[0])
