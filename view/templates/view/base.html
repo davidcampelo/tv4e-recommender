@@ -26,7 +26,7 @@
     <link href="{% static 'styles/bootstrap.css' %}" rel="stylesheet">
     <link href="{% static 'styles/main.css' %}" rel="stylesheet"> -->
     
-    <title>+TV4E Viewport</title>
+    <title>+Majordomo recommender for +TV4E platform</title>
 
 
     {% block head %}
@@ -39,13 +39,13 @@
       
       <div class="header">
               <ul class="nav nav-pills pull-right">
-                <li class="{% if request.resolver_match.url_name == 'user_index' %}active{%endif%}"><a href="{% url 'user_index' %}">Utilizadores</a></li>
+                <li class="{% if request.resolver_match.url_name == 'user_index' %}active{%endif%}"><a href="{% url 'user_index' %}">Users</a></li>
                 <li class="{% if request.resolver_match.url_name == 'asgie_index' %}active{%endif%}"><a href="{% url 'asgie_index' %}">ASGIEs</a></li>
-                <li class="{% if request.resolver_match.url_name == 'video_index' %}active{%endif%}"><a href="{% url 'video_index' %}">Vídeos informativos</a></li>
-                <li class="{% if request.resolver_match.url_name == 'analytics' %}active{%endif%}"><a href="{% url 'analytics' %}">Indicadores</a></li>
+                <li class="{% if request.resolver_match.url_name == 'video_index' %}active{%endif%}"><a href="{% url 'video_index' %}">Informative Videos</a></li>
+                <li class="{% if request.resolver_match.url_name == 'analytics' %}active{%endif%}"><a href="{% url 'analytics' %}">Analytics</a></li>
                 <li><a href="/">Logout</a></li>
               </ul>
-        <h2 class="text-muted active"><strong>&nbsp;+TV4E Viewport</strong></h2>
+        <h2 class="text-muted active"><strong>+TV4E Majordomo Viewport v0.1b</strong></h2>
       </div>
     
 

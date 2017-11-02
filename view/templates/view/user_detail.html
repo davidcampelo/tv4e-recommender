@@ -47,20 +47,20 @@
                 <button type="button" class="btn btn-default btn-sm">
                     <span class="glyphicon glyphicon-step-backward"></span></a>
                 </button>
-                &nbsp;&nbsp;&nbsp;<strong>Utilizador</strong>
+                &nbsp;&nbsp;&nbsp;<strong>User</strong>
             </div>
             <div class="panel-body">
                 <ul>
                     <li>ID: {{item.id}}</li>
-                    <li>Nome: <strong>{{item.name | default:"Não informado" | upper}}</strong></li>
-                    <li>Género: {{ item.gender | default:"Não informado" }}</li>
-                    <li>Cidade: {{item.city.id}} - {{item.city.name}}</li>
+                    <li>Name: <strong>{{item.name | default:"Não informado" | upper}}</strong></li>
+                    <li>Gender: {{ item.gender | default:"Não informado" }}</li>
+                    <li>Location: {{item.city.id}} - {{item.city.name}}</li>
                 </ul>
             </div>
         
         <div class="panel panel-default"  style="margin-left:10px; margin-right:10px;">
                 <div class="panel-heading" style="font-size:2rem">            
-                        Classificações
+                        Ratings
                 </div>
            <div class="panel-body">
             {% if ratings.count %}
@@ -68,8 +68,8 @@
                         <thead>
                         <tr>
                             <th>ID</th>
-                            <th>Título</th>
-                            <th>Pontuação</th>
+                            <th>Title</th>
+                            <th>Rating</th>
                             <th></th>
                         </tr>
                         </thead>
@@ -85,7 +85,7 @@
                         </tbody>
                         <tr>
                             <td></td>
-                            <td><strong>Média</strong></td>
+                            <td><strong>Mean</strong></td>
                             <td><strong>{{mean}}</strong></td>
                             <td></td>
                         </tr>
@@ -97,7 +97,7 @@
         </div>
         <div class="panel panel-default" style="margin-left:10px; margin-right:10px;">
             <div class="panel-heading" style="font-size:2rem">            
-                    Recomendações
+                    Recommendations for this user
             </div>
             <div class="panel-body" id="recommendations" class="row" style="visibility: hidden">
                 <script>

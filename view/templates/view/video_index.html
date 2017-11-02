@@ -9,12 +9,12 @@
             <tr>
                 <td class="col-xs-3" valign="top">
                     <div class="panel panel-default">
-                            <div class="panel-heading"><h4><strong>Filtrar por ASGIE</strong></h4></div>
+                            <div class="panel-heading"><h4><strong>Filter by ASGIE (n/a)</strong></h4></div>
                             <div class="panel-body">
                                 <ul class="nav nav-sidebar">
                                 {% if asgies %}
                                 {% for asgie in asgies %}
-                                    <li> <a href="#">{{asgie.title_pt}}</a> </li>
+                                    <li> <a href="#">{{asgie.title}}</a> </li>
                                 {% endfor %}
                                 {% endif %}
                                 </ul>
@@ -26,7 +26,7 @@
                         <div class="panel-heading">
                             <table width="100%" cellspacing="0" cellpadding="0">
                                 <tr>
-                                    <td align="left"><h4><strong>Vídeos informativos</strong></h4></td>
+                                    <td align="left"><h4><strong>Informative Videos</strong></h4></td>
                                     <td align="right"><form class="navbar-form" action="/">
                                         <div class="form-group" style="display:inline;">
                                             <input type="text" style="width:150px" class="form-control" placeholder="Search" name="q" style="bg-color='gray'" maxlength="20">
@@ -72,7 +72,7 @@
                         </ul>
                         {% endif %}
                         </div>
-                            Foram encontrados {{videos_count}} videos.
+                            Found {{videos_count}} videos.
                     </div>
                 </td>
             </tr>

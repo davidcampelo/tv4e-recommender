@@ -37,18 +37,17 @@
             <div class="panel-body">
                 <ul>
                     <li>ID: {{asgie.id}}</li>
-                    <li>Título: <strong>{{asgie.title_pt | upper}}</strong></li>
-                    <li>Título em inglês: {{asgie.title}}</li>
-                    <li>Data de criação: {{asgie.created_at}}</li>
-                    <li>Cor padrão: 
+                    <li>Title (pt): <strong>{{asgie.title_pt | upper}}</strong></li>
+                    <li>Título (en): {{asgie.title}}</li>
+                    <li>Default color:
                     <div class="input-color">
                         <input type="text" value="{{asgie.color}}" readonly="readonly"/>
                         <div class="color-box" style="background-color: {{asgie.color}};"></div>
                     </div></li>
-                    <li>Imagem padrão: <img src="{% static 'img/'|add:asgie.image %}" width="100%"></li>
+                    <li>Default image: <img src="{% static 'img/'|add:asgie.image %}" width="100%"></li>
                 </ul>
             </div>
-        
+        <!--
         <div class="panel panel-default"  style="margin-left:10px; margin-right:10px;">
             {% if asgie.information_sources.count %}
                 <div class="panel-heading" style="font-size:2rem">            
@@ -82,6 +81,7 @@
                <p>Nenhuma fonte de informação encontrada</p>
             {% endif %}
         </div>
+        -->
 </div>
 
 

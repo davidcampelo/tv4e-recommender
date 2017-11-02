@@ -48,14 +48,14 @@
                 <button type="button" class="btn btn-default btn-sm">
                     <span class="glyphicon glyphicon-step-backward"></span></a>
                 </button>
-                &nbsp;&nbsp;&nbsp;<strong>Vídeo informativo</strong>
+                &nbsp;&nbsp;&nbsp;<strong>Informative Video</strong>
             </div>
             <div class="panel-body">
                 <ul>
-                    <li><strong>Título: {{video.id}} - {{video.title}}</strong></li>
+                    <li><strong>Title: {{video.id}} - {{video.title}}</strong></li>
                     <li>URL: <a href="{{video.av_resource.url}}">{{video.av_resource.url}}</a></li>
                     <li>ASGIE: {{video.asgie.title_pt}}</li>
-                    <li>Texto:</li>
+                    <li>Text:</li>
                     <p>{{video.desc}}</p>
                     <li>Tokens:</li>
                     <p>{{video.tokens | default:"Não informado"}}</p>
@@ -63,7 +63,7 @@
             </div>
             <div class="panel panel-default" style="margin-left:10px; margin-right:10px;">
                 <div class="panel-heading" style="font-size:2rem">            
-                        Vídeos similares
+                        Similar videos
                 </div>
                 <div class="panel-body" id="similar_contents" class="row" style="visibility: hidden">
                     <script>
