@@ -17,7 +17,7 @@ from majordomo.models import Video
 
 logging.basicConfig(format='[%(asctime)s] %(levelname)s - %(message)s', level=logging.DEBUG)
 
-NUMBER_OF_RECOMMENDATIONS = 10
+NUMBER_OF_RECOMMENDATIONS = 4
 
 
 class GeographicFilter(object):
@@ -40,7 +40,7 @@ class TimeDecayFilter(object):
         self.__dataframe_videos=self.__dataframe_videos.sort_values(['video_date_creation'])
         self.__NOW = datetime.datetime.now()
 
-    def filter(self, user_id, user_recommendations, n_recommendations=int(NUMBER_OF_RECOMMENDATIONS/2)):
+    def filter(self, user_id, user_recommendations, n_recommendations=NUMBER_OF_RECOMMENDATIONS):
         logging.debug("Filtering time decay recommendations for user_id={} n_recommendations={}".format(user_id, n_recommendations))
         if user_recommendations is None:
             filtered_recommendations = [(row.video_id, row.video_date_creation, "")

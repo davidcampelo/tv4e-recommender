@@ -52,7 +52,7 @@ class Updater(object):
             dataframe_videos_filtered = geo_filter.filter(location_id)
 
             # Creating a content-based recommender
-            content_based_rec = ContentBasedRecommender(n_similar=settings.NUMBER_OF_RECOMMENDATIONS*2,
+            content_based_rec = ContentBasedRecommender(n_similar=settings.NUMBER_OF_RECOMMENDATIONS*3,
                                                         dataframe_videos=dataframe_videos_filtered)
             content_based_rec.find_similarities()
             time_filter = TimeDecayFilter(dataframe_videos=dataframe_videos_filtered)
