@@ -8,7 +8,7 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 from math import *
 from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.metrics.pairwise import linear_kernel
+from sklearn.metrics.pairwise import linear_kernel, cosine_similarity
 from sklearn.decomposition import TruncatedSVD
 import datetime
 import dateutil
@@ -191,15 +191,6 @@ class ContentBasedRecommender(object):
         user_profile = user_profile / np.linalg.norm(user_profile)
         return user_profile
 
-    @staticmethod
-    def __cosine_similarity(x, y):
-        def square_rooted(v):
-            return round(sqrt(sum([a * a for a in v])), 3)
-
-        numerator = sum(a * b for a, b in zip(x, y))
-        denominator = square_rooted(x) * square_rooted(y)
-        return numerator/float(denominator)
-
     def calculate_recommendations(self, user_id, dataframe_user_ratings):
         # apply cosine similarity between user profile vector and content vectors
         # See: http://eugenelin89.github.io/recommender_content_based/
@@ -219,7 +210,7 @@ class ContentBasedRecommender(object):
                 user_recommendations.append((
                     video_id,
                     self.__dataframe_videos[(self.__dataframe_videos['video_id'] == video_id)].video_date_creation[0],
-                    self.__cosine_similarity(user_profile, token_weights)
+                    cosine_similarity([user_profile], [token_weights])[0]
                 ))
         # order ratings by similarity
         user_recommendations = sorted(user_recommendations, key=lambda tup: tup[2], reverse=True)[:n_similar]
