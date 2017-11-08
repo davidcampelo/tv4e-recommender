@@ -5,9 +5,7 @@ from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 
 from django.db.models import Avg
 
-from view.models import Asgie, InformativeVideos, AsgieAvResource
-from rs.models import Senior, Rating
-from rs.models import VideoTokens
+from majordomo.models import Asgie, Video, User, Rating
 
 # VIDEOS
 ###################################################################################################################
@@ -20,7 +18,7 @@ def video_index(request):
     #     selected = Asgie.objects.filter(id=asgie_selected)[0]
     #     videos = selected.movies.order_by('-created_at')
     # else:
-    videos = InformativeVideos.objects.order_by('-created_at')
+    videos = Video.objects.order_by('-id')
     videos_count = len(videos)
     asgies = Asgie.objects.all()
 
@@ -52,10 +50,9 @@ def video_index(request):
 
 
 def video_detail(request, video_id):
-    video = InformativeVideos.objects.get(id=video_id)
-    videotokens = VideoTokens.objects.filter(video_id=video_id)
-    print(videotokens[0].tokens)
-    context = {'video': video, 'videotokens' : videotokens[0]}
+    video = Video.objects.get(id=video_id)
+    # videotokens = VideoTokens.objects.get(pk=video_id)
+    context = {'video': video}
     return render(request, 'view/video_detail.html', context)
 
 
@@ -71,8 +68,7 @@ class AsgieIndexView(generic.ListView):
 
 def asgie_detail(request, asgie_id):
     asgie = Asgie.objects.get(id=asgie_id)
-    resources = [aar.av_resource.url for aar in AsgieAvResource.objects.filter(asgie=asgie)]
-    context = {'asgie': asgie, 'resources': resources}
+    context = {'asgie': asgie}
     return render(request, 'view/asgie_detail.html', context)
 
 
@@ -83,16 +79,16 @@ class UserIndexView(generic.ListView):
     context_object_name = 'items'
 
     def get_queryset(self):
-        return Senior.objects.all()
+        return User.objects.all()
 
 
 def user_detail(request, user_id):
-    item = Senior.objects.get(id=user_id)
+    item = User.objects.get(pk=user_id)
     ratings = Rating.objects.filter(user_id=user_id)
     context = {'item': item, 'ratings': ratings} 
     if len(ratings) > 0:
-        mean = ratings.aggregate(value=Avg('rating'))
-        context['mean'] = round(mean['value'],2)
+        mean = ratings.aggregate(value=Avg('overall_rating_value'))
+        context['mean'] = round(mean['value'],3)
     
     return render(request, 'view/user_detail.html', context)
 
@@ -101,5 +97,4 @@ def user_detail(request, user_id):
 ###################################################################################################################
 
 def analytics(request):
-    context_dict = {}
-    return render(request, 'view/analytics.html', context_dict)
+    return render(request, 'view/analytics.html', {})

@@ -25,4 +25,6 @@ urlpatterns = [
     url(r'^view/', include('view.urls')),
     # ex: /rs/
     url(r'^rs/', include('rs.urls')),
+    # ex: /majordomo/
+    url(r'^majordomo/', include('majordomo.urls')),
 ]

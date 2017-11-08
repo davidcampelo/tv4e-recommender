@@ -7,12 +7,14 @@ This system has been developed in the scope of a PhD research [2] in the context
 ## Installation/Configuration guide:
 
 System requirements:
-* Ubuntu 14.04
+* Ubuntu 16.04
 * Redis DB (Click [here](https://hostpresto.com/community/tutorials/how-to-install-and-configure-redis-on-ubuntu-14-04/)  for instructions)
-* Python 2.7.x
+* Python 3.5.x
+* Python3-TK library (sudo apt-get install python3-tk)
+* Python MySQL integration library (sudo apt-get install libmysqlclient-dev)
 
 For windows users it's a good idea to install the Anaconda package. Anaconda is the leading open data science platform powered by Python (according to their homepage) [Anaconda](https://www.continuum.io/downloads)
- 
+
 ### Download code
 ```bash
 > git clone https://github.com/davidcampelo/tv4e-recommender

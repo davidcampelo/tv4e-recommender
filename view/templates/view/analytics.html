@@ -20,14 +20,14 @@ var margin = {top: 20, right: 0, bottom: 30, left: 50},
     padding = 5;
 
 function getTopContent() {
-  $.getJSON('/rs/analytics/top10/', function(result) {
+  $.getJSON('/majordomo/analytics/top10/', function(result) {
     var ul = document.getElementById("top10");
 
     result.data.forEach(function(element, index, array) {
       var li = document.createElement("li");
       var a = document.createElement("a");
       a.setAttribute('href', "/view/video/" + element.video_id + "/");
-      a.innerHTML= element.video_title + "(média: "  + element.avg_rating + ")"
+      a.innerHTML= element.video_title + " (média: "  + element.avg_rating + ")"
 
       li.appendChild(a);
       li.setAttribute("id",element.content_id);
@@ -38,7 +38,7 @@ function getTopContent() {
 
 function drawRatingChart(id) {
 
-  d3.json("/rs/analytics/ratings_distribution", function(error, eventData) {
+  d3.json("/majordomo/analytics/ratings_distribution", function(error, eventData) {
    var canvas = d3.select(id)
             .append("svg")
             .attr("width", width)
@@ -51,7 +51,7 @@ function drawRatingChart(id) {
     myChart.addMeasureAxis("y", "quantidade" );
     myChart.addSeries(null, dimple.plot.bar);
     myChart.addSeries(null, dimple.plot.line);
-    myChart.setBounds(30, 30,490, 250);
+    myChart.setBounds(40, 30,480, 250);
     x.addOrderRule("classificação");
     myChart.draw();
 
@@ -64,7 +64,7 @@ function drawRatingChart(id) {
 
 function drawDailyEvolution(id) {
 
-  d3.json("/rs/analytics/ratings_dailyevolution", function(error, eventData) {
+  d3.json("/majordomo/analytics/ratings_dailyevolution", function(error, eventData) {
    var canvas = d3.select(id)
             .append("svg")
             .attr("width", width)
@@ -73,13 +73,13 @@ function drawDailyEvolution(id) {
             .attr("class", 'chart');
 
     var myChart = new dimple.chart(canvas, eventData);
-    myChart.setBounds(30, 50,490, 220);
+    myChart.setBounds(40, 50,470, 220);
 
     var x = myChart.addCategoryAxis("x", "dia");
     var y1 = myChart.addMeasureAxis("y", "quantidade" );
     var y2 = myChart.addMeasureAxis("y", "acumulado" );
 
-    myChart.addSeries("Diário ", dimple.plot.bar, [x, y1]);
+    myChart.addSeries("Diário", dimple.plot.bar, [x, y1]);
     myChart.addSeries("Acumulado", dimple.plot.line, [x, y2]);
 
     myChart.addLegend(450, 15, 110, 20, "left");
@@ -96,7 +96,7 @@ function drawDailyEvolution(id) {
 
 function drawWeekday(id) {
 
-  d3.json("/rs/analytics/ratings_weekday", function(error, eventData) {
+  d3.json("/majordomo/analytics/ratings_weekday", function(error, eventData) {
    var canvas = d3.select(id)
             .append("svg")
             .attr("width", width)
@@ -110,7 +110,7 @@ function drawWeekday(id) {
     myChart.addMeasureAxis("y", "quantidade" );
     myChart.addSeries(null, dimple.plot.bar);
     myChart.addSeries(null, dimple.plot.line);
-    myChart.setBounds(30, 30,490, 250);
+    myChart.setBounds(40,30,480,250);
     myChart.draw();
 
     canvas.append("text")
@@ -122,42 +122,17 @@ function drawWeekday(id) {
 
 
 
-// function drawChart(id) {
-
-//   d3.json("" function(error, eventData) {
-//    var canvas = d3.select(id)
-//             .append("svg")
-//             .attr("width", width)
-//             .attr("height", height)
-//             .append('g')
-//             .attr("class", 'chart');
-
-//     var myChart = new dimple.chart(canvas, eventData);
-//     var x = myChart.addCategoryAxis("x", ["event","conversion"] );
-//     myChart.addMeasureAxis("y", "count_items" );
-//     myChart.addSeries("conversion", dimple.plot.bar);
-//     myChart.addLegend(110, 30, 110, 20, "right");
-//     myChart.setBounds(30, 30, 180, 130);
-//     myChart.draw();
-
-//     canvas.append("text")
-//           .attr("x", myChart._xPixels() + myChart._widthPixels()/2 -110)
-//           .attr("y", myChart._yPixels() - 20)
-//           .text("Sessions with a buy and without");
-//   });
-// }
-
 
 
 function update_statistics() {
   var tomorrow = new Date();
   tomorrow.setDate(tomorrow.getDate() + 1);
   start_data = tomorrow.toJSON().slice(0,10);
-  $.getJSON('/rs/analytics/get_statistics?date=' + start_data, function(result) {
+  $.getJSON('/majordomo/analytics/get_statistics?date=' + start_data, function(result) {
     document.getElementById("mean_rating").textContent = result.mean_rating;
     document.getElementById("videos_rated_distinct").textContent = result.videos_rated_distinct;
     document.getElementById("videos_rated_total").textContent = result.videos_rated_total;
-    document.getElementById("most_active_user").textContent = result.most_active_user_name + " (" + result.most_active_user_count + ")";
+    document.getElementById("most_active_user").textContent = "ID: "+ result.most_active_user_id + " - total: " + result.most_active_user_count + "";
     document.getElementById("stats_users").textContent = result.n_active_users + "/" + result.n_total_users + " ("+ result.active_users_percent + " %)";
   })
 
@@ -175,7 +150,7 @@ function update_statistics() {
         <div class="panel-heading">
             <table width="100%" cellspacing="0" cellpadding="0">
                 <tr>
-                    <td align="left"><h4><strong>Indicadores</strong></h4></td>
+                    <td align="left"><h4><strong>Analytics</strong></h4></td>
                     <td align="right">
                     </td>
                 </tr>
@@ -196,13 +171,13 @@ function update_statistics() {
 <div class="row" id="statistics">
     <div class="col-sm-2">
         <div class="well kpi-box">
-             Avaliações: <br/>
+             Ratings: <br/>
             <result id="videos_rated_total"></result>
         </div>
     </div>
     <div class="col-sm-2">
         <div class="well kpi-box">
-            Vídeos avaliados: <br />
+            Rated videos: <br />
             <result id="videos_rated_distinct"></result>
         </div>
     </div>
@@ -214,19 +189,19 @@ function update_statistics() {
     </div>
     <div class="col-sm-2">
         <div class="well kpi-box">
-             Utilizadores ativos: <br/>
+             Active users: <br/>
             <result id="stats_users"></result>
         </div>
     </div>
     <div class="col-sm-2">
         <div class="well kpi-box">
-            Utilizador mais ativo: <br/>
+            Most active user: <br/>
             <result id="most_active_user"></result>
         </div>
     </div>
     <div class="col-sm-2">
         <div class="well kpi-box">
-            Classificação média: <br/>
+            Average rating: <br/>
             <result id="mean_rating"></result>
         </div>
     </div>
@@ -235,7 +210,7 @@ function update_statistics() {
 <div class="row">
     <div class="col-sm-6">
         <list>
-            <p>Top 10 vídeos<p>
+            <p>Top 10 videos<p>
             <ul id="top10"></ul>
         </list>
     </div>
