@@ -35,7 +35,7 @@ class Updater(object):
             separator=settings.SEPARATOR
         )
 
-        content_based_rec.visualize_data()
+        #content_based_rec.visualize_data()
 
     @staticmethod
     def update_recommendations():
