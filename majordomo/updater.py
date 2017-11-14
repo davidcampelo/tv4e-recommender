@@ -11,14 +11,19 @@ os.environ.setdefault("DJANGO_SETTINGS_MODULE", "tv4e.settings")
 django.setup()
 
 from django.conf import settings
+import logging
 
 from recommenders import ContentBasedRecommender, GeographicFilter, TimeDecayFilter
 from data import TV4EDataConnector, RedisConnector
+from lock import LockedModel
 
+logging.basicConfig(format='[%(asctime)s] %(levelname)s - %(message)s', level=logging.DEBUG)
 
-class Updater(object):
-    @staticmethod
-    def update_tv4e_data():
+class Updater(LockedModel):
+    id = "0"
+
+    def update_tv4e_data(self):
+        logging.info("***** update_tv4e_data() IN")
         redis = RedisConnector(url=settings.REDIS_URL)
         tv4e_connector = TV4EDataConnector(persist_to_db=True)
         dataframe_videos = tv4e_connector.load_videos()
@@ -35,10 +40,13 @@ class Updater(object):
             separator=settings.SEPARATOR
         )
 
+        logging.info("***** update_tv4e_data() OUT")
         #content_based_rec.visualize_data()
 
-    @staticmethod
-    def update_recommendations():
+
+    def update_recommendations(self):
+
+        logging.info("***** update_recommendations() IN")
         redis = RedisConnector(url=settings.REDIS_URL)
         tv4e_connector = TV4EDataConnector()
         dataframe_videos = tv4e_connector.load_videos()
@@ -74,8 +82,19 @@ class Updater(object):
                                                 default_key=settings.KEY_USER_RECOMMENDATION,
                                                 separator=settings.SEPARATOR,
                                                 user_recommendations=user_recommendations)
+        logging.info("***** update_recommendations() OUT")
 
 
 if __name__ == "__main__":
-    Updater().update_tv4e_data()
-    Updater().update_recommendations()
+    updater = Updater()
+    error = False
+    try:
+        updater.lock()
+        updater.update_tv4e_data()
+        updater.update_recommendations()
+    except Exception as err:
+        error = True
+        raise
+    finally:
+        if not error:
+            updater.unlock()

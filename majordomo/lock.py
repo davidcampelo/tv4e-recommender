@@ -4,7 +4,7 @@ from django.db import models
 
 from django.conf import settings
 
-lock_table = redis.StrictRedis(settings.REDIS_URL)
+lock_table = redis.StrictRedis.from_url(settings.REDIS_URL)
 
 
 class ConcurrentModificationError(ValueError):
@@ -42,7 +42,7 @@ class LockedModel:
 
     def lock(self):
         if self.is_locked():
-            raise AlreadyLockedError('Tried to lock an already-locked row.')
+            raise AlreadyLockedError('This item is locked right now, please try again later.')
         lock_table.set(self._lock_key, b'1')
 
     def unlock(self):

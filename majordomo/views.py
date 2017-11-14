@@ -19,11 +19,19 @@ logging.basicConfig(format='[%(asctime)s] %(levelname)s - %(message)s', level=lo
 
 
 def refresh_recommendations(request):
+    updater = Updater()
+    error = False
     try:
-        Updater.update_recommendations()
+        updater.lock()
+        updater.update_recommendations()
     except Exception as err:
-        return HttpResponseServerError(err)
-
+        error = True
+        logging.warning("***** Error during refresh_recommendations: {}". format(err))
+        return HttpResponse(err)
+    finally:
+        if not error:
+            updater.unlock()
+    
     return HttpResponse("Ok")
 
 def similar_content(request, content_id):
