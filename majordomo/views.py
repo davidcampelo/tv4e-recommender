@@ -10,9 +10,12 @@ from django.db import connection
 
 import operator
 import redis
+import logging
 
 from majordomo.models import Video,Rating,User
 from majordomo.updater import Updater
+
+logging.basicConfig(format='[%(asctime)s] %(levelname)s - %(message)s', level=logging.DEBUG)
 
 
 def refresh_recommendations(request):
@@ -57,7 +60,7 @@ def user_recommendations(request, user_id):
             columns[1]: video.title,
             columns[2]: video.asgie.image
         })
-
+    logging.debug("Returning user_recommendations user_id={} recommendations={}".format(user_id, ' '.join([video_id.decode('utf-8') for video_id in user_recommendations])))
     return JsonResponse(dict(data=list(data)), safe=False)
 
 def fast_user_recommendations(request, user_id):
@@ -66,6 +69,7 @@ def fast_user_recommendations(request, user_id):
     user_recommendations = db.lrange(key, 0, settings.NUMBER_OF_RECOMMENDATIONS - 1)
     columns = ['user_id', 'video_id']
     data = [{columns[0]: user_id, columns[1]: video_id.decode('utf-8')} for video_id in user_recommendations]
+    logging.debug("Returning fast_user_recommendations user_id={} recommendations={}".format(user_id, ' '.join([video_id.decode('utf-8') for video_id in user_recommendations])))
 
     return JsonResponse(dict(data=list(data)), safe=False)
 
