@@ -12,10 +12,11 @@ django.setup()
 
 from django.conf import settings
 import logging
+import traceback
 
 from recommenders import ContentBasedRecommender, GeographicFilter, TimeDecayFilter
 from data import TV4EDataConnector, RedisConnector
-from lock import LockedModel
+from lock import LockedModel, AlreadyLockedError
 
 logging.basicConfig(format='[%(asctime)s] %(levelname)s - %(message)s', level=logging.DEBUG)
 
@@ -92,9 +93,13 @@ if __name__ == "__main__":
         updater.lock()
         updater.update_tv4e_data()
         updater.update_recommendations()
+    except AlreadyLockedError as err:
+        error = True
+        logging.warning("***** Called refresh during refresh recommendations!")
     except Exception as err:
         error = True
-        raise
-    finally:
-        if not error:
-            updater.unlock()
+        logging.error("***** Unhandled error during refresh_recommendations: {}". format(err))
+        traceback.print_exc()
+
+    if not error:
+        updater.unlock()

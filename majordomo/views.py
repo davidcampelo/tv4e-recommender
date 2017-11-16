@@ -11,9 +11,11 @@ from django.db import connection
 import operator
 import redis
 import logging
+import traceback
 
 from majordomo.models import Video,Rating,User
 from majordomo.updater import Updater
+from majordomo.lock import AlreadyLockedError
 
 logging.basicConfig(format='[%(asctime)s] %(levelname)s - %(message)s', level=logging.DEBUG)
 
@@ -24,15 +26,19 @@ def refresh_recommendations(request):
     try:
         updater.lock()
         updater.update_recommendations()
+    except AlreadyLockedError as err:
+        error = True
+        logging.warning("***** Called refresh during refresh recommendations!")
+        return HttpResponseServerError(err)
     except Exception as err:
         error = True
-        logging.warning("***** Error during refresh_recommendations: {}". format(err))
-        return HttpResponse(err)
-    finally:
-        if not error:
+        logging.error("***** Unhandled error during refresh_recommendations: {}". format(type(err)))
+        traceback.print_exc()
+        return HttpResponseServerError(err)
+
+    if not error:
             updater.unlock()
-    
-    return HttpResponse("Ok")
+            return HttpResponse("Ok")
 
 def similar_content(request, content_id):
     db = redis.StrictRedis.from_url(settings.REDIS_URL)
