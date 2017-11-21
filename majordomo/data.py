@@ -64,15 +64,19 @@ class TV4EDataConnector(object):
 
         if self.__persist_to_db:
             for index, row in self.__dataframe_users.iterrows():
-                if User.objects.filter(pk=row.user_id).count() == 0:
-                    user=User(
-                        id=row.user_id,
-                        age=row.user_age,
-                        gender=row.user_gender,
-                        city=City.objects.only('id').get(id=row.city_id),
-                        coordinates=row.user_coordinates,
-                    )
-                    user.save()
+                try:
+                    if User.objects.filter(pk=row.user_id).count() == 0:
+                        user=User(
+                            id=row.user_id,
+                            age=row.user_age,
+                            gender=row.user_gender,
+                            city=City.objects.only('id').get(id=row.city_id),
+                            coordinates=row.user_coordinates,
+                        )
+                        user.save()
+                except:
+                        logging.error("Error while saving User: user_id={}".format(row.user_id))
+
         logging.debug("Users data loaded! n=%s" % self.__dataframe_users.shape[0])
 
         return self.__dataframe_users
@@ -89,7 +93,7 @@ class TV4EDataConnector(object):
         data=requests.get(self.__URL_VIDEOS)
         self.__dataframe_videos=pd.DataFrame(data.json())
         # XXX transposing as the API returns a pre index list of videos
-        self.__dataframe_videos = self.__dataframe_videos.transpose()
+        # self.__dataframe_videos = self.__dataframe_videos.transpose()
         if self.__persist_to_db:
             for index, row in self.__dataframe_videos.iterrows():
                 if Video.objects.filter(pk=row.video_id).count() == 0:
@@ -131,19 +135,21 @@ class TV4EDataConnector(object):
         if self.__persist_to_db:
             Rating.objects.all().delete()
             for index, row in self.__dataframe_ratings.iterrows():
-                rating=Rating(
-                    user=User.objects.only('id').get(id=row.user_id),
-                    video=Video.objects.only('id').get(id=row.video_id),
-                    watch_time=row.video_watch_time,
-                    value=row.rating_value,
-                    date_creation=pytz.utc.localize(dateutil.parser.parse(row.rating_date_creation)),
-                    watched_type=row.video_watched_type,
-                    rating_implicit=row.rating_implicit,
-                    rating_explicit=row.rating_explicit,
-                    overall_rating_value=row.overall_rating_value
-                )
-                rating.save()
-
+                try:
+                    rating=Rating(
+                        user=User.objects.only('id').get(id=row.user_id),
+                        video=Video.objects.only('id').get(id=row.video_id),
+                        watch_time=row.video_watch_time,
+                        value=row.rating_value,
+                        date_creation=pytz.utc.localize(dateutil.parser.parse(row.rating_date_creation)),
+                        watched_type=row.video_watched_type,
+                        rating_implicit=row.rating_implicit,
+                        rating_explicit=row.rating_explicit,
+                        overall_rating_value=row.overall_rating_value
+                    )
+                    rating.save()
+                except:
+                    logging.error("Error while saving Rating: user_id={} video_id={}".format(row.user_id, row.video_id))
         logging.debug("Ratings data loaded! n=%s" % self.__dataframe_ratings.shape[0])
 
         return self.__dataframe_ratings

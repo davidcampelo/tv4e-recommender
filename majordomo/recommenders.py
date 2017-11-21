@@ -209,7 +209,7 @@ class ContentBasedRecommender(object):
             if video_id not in dataframe_user_ratings.video_id.values:
                 user_recommendations.append((
                     video_id,
-                    self.__dataframe_videos[(self.__dataframe_videos['video_id'] == video_id)].video_date_creation[0],
+                    self.__dataframe_videos[(self.__dataframe_videos.video_id == video_id)].video_date_creation.values[0],
                     cosine_similarity([user_profile], [token_weights])[0]
                 ))
         # order ratings by similarity
