@@ -97,9 +97,8 @@ if __name__ == "__main__":
         error = True
         logging.warning("***** Called refresh during refresh recommendations!")
     except Exception as err:
-        error = True
         logging.error("***** Unhandled error during refresh_recommendations: {}". format(err))
         traceback.print_exc()
-
-    if not error:
-        updater.unlock()
+    finally:
+        if not error:
+            updater.unlock()
