@@ -42,6 +42,7 @@ class TimeDecayFilter(object):
 
     def filter(self, user_id, user_recommendations, n_recommendations=NUMBER_OF_RECOMMENDATIONS):
         logging.debug("Filtering time decay recommendations for user_id={} n_recommendations={}".format(user_id, n_recommendations))
+        # COLD-START handling: If no recommendations are passed, retuns the latest ones 
         if user_recommendations is None:
             filtered_recommendations = [(row.video_id, row.video_date_creation, "")
                                         for index,row in self.__dataframe_videos[:-n_recommendations-1:-1].iterrows()]
@@ -72,6 +73,8 @@ class ContentBasedRecommender(object):
         self.__tfidf_vectorizer = None
         self.__tfidf_matrix = None
         self.__tfidf_tokens_dict = None
+
+        self.__NOW = datetime.datetime.now()
 
     def __create_tfidf_tokens_dict(self):
         # create dict content_id ==>> tfidf weights
@@ -183,9 +186,12 @@ class ContentBasedRecommender(object):
             for idx, row in user_ratings.iterrows():
                 # print('i = %s rating = %s video_id = %s' % (i, row.overall_rating_value, row.video_id))
                 # print('tokens = %s' % self.__tfidf_tokens_dict[row.video_id])
-                w1 = float(row.overall_rating_value)
-                w2 = float(self.__tfidf_tokens_dict[row.video_id][i])
-                user_profile[i] += w1 * w2
+
+                # Apply time decay to ratings also!
+                timedelta = self.__NOW - dateutil.parser.parse(row.rating_date_creation)
+                weighted_rating = float(row.overall_rating_value/(timedelta.days + 1))
+                weight_of_word = float(self.__tfidf_tokens_dict[row.video_id][i])
+                user_profile[i] += weighted_rating * weight_of_word
                 # user_profile = [v/len(user_ratings) for v in user_profile] # weight-ing user vector (?)
         # normalize user profile vector
         user_profile = user_profile / np.linalg.norm(user_profile)
