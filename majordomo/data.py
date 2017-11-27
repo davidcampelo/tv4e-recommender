@@ -5,6 +5,7 @@ import requests
 import redis
 import dateutil
 import pytz
+import traceback
 
 from majordomo.models import City,User,Asgie,Video,Rating
 
@@ -73,9 +74,16 @@ class TV4EDataConnector(object):
                             city=City.objects.only('id').get(id=row.city_id),
                             coordinates=row.user_coordinates,
                         )
-                        user.save()
+                    else:
+                        user = User.objects.get(id=row.user_id)
+                        user.age=row.user_age
+                        user.gender=row.user_gender
+                        user.city=City.objects.get(id=row.city_id)
+                        user.coordinates=row.user_coordinates
+                    user.save()
                 except:
-                        logging.error("Error while saving User: user_id={}".format(row.user_id))
+                    logging.error("Error while saving User: user_id={}".format(row.user_id))
+                    traceback.print_exc()
 
         logging.debug("Users data loaded! n=%s" % self.__dataframe_users.shape[0])
 
@@ -156,6 +164,8 @@ class TV4EDataConnector(object):
                     rating.save()
                 except:
                     logging.error("Error while saving Rating: user_id={} video_id={}".format(row.user_id, row.video_id))
+                    traceback.print_exc()
+
         logging.debug("Ratings data loaded! n=%s" % self.__dataframe_ratings.shape[0])
 
         return self.__dataframe_ratings
