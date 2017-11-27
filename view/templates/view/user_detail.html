@@ -69,8 +69,11 @@
                         <tr>
                             <th>ID</th>
                             <th>Title</th>
-                            <th>Rating</th>
-                            <th></th>
+                            <th>Rating Implicit<br>(%time)</th>
+                            <th>Rating Explicit<br>(like/0/dislike)</th>
+                            <th bgcolor="#efefef">Overall Rating</th>
+                            <th>Date</th>
+                            <th>Type</th>
                         </tr>
                         </thead>
                         <tbody>
@@ -78,12 +81,17 @@
                         <tr>
                             <td><a href="{% url 'video_detail' rating.video.id %}">{{rating.video.id}}</a></td>
                             <td><a href="{% url 'video_detail' rating.video.id %}">{{rating.video.title}}</a></td>
-                            <td>{{rating.overall_rating_value|floatformat:"3"}} </td>
-                            <td>({{rating.watched_type}})</td>
+                            <td>{{rating.rating_implicit|floatformat:"3"}} </td>
+                            <td>{{rating.rating_explicit|floatformat:"0"}} </td>
+                            <td bgcolor="#efefef">{{rating.overall_rating_value|floatformat:"3"}} </td>
+                            <td>{{rating.date_creation|date:"d/M/Y"}} </td>
+                            <td>{{rating.watched_type}} </td>
                         </tr>
                         {% endfor %}
                         </tbody>
                         <tr>
+                            <td></td>
+                            <td></td>
                             <td></td>
                             <td><strong>Mean</strong></td>
                             <td><strong>{{mean}}</strong></td>

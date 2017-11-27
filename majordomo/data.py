@@ -129,6 +129,7 @@ class TV4EDataConnector(object):
         # XXX use a function to calculate implicit rating considering the video lead time
         self.__dataframe_ratings['rating_implicit'] = (self.__dataframe_ratings['video_watch_time']/100) * 0.3
         self.__dataframe_ratings['rating_explicit'] = (self.__dataframe_ratings['rating_value'])         * 0.7
+        self.__dataframe_ratings['rating_implicit'][self.__dataframe_ratings.rating_explicit < 0] = self.__dataframe_ratings['rating_implicit'] * -1
         # create a new column to put implicit or explicit rating value
         self.__dataframe_ratings['overall_rating_value'] = self.__dataframe_ratings['rating_implicit'] + self.__dataframe_ratings['rating_explicit']
 
