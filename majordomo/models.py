@@ -53,14 +53,12 @@ class Rating(models.Model):
     video = models.ForeignKey(Video, null=False)
     # Percentage of video watched
     watch_time = models.IntegerField(null=False)
-    # Value of explicit rating
-    value = models.DecimalField(decimal_places=1, max_digits=2, default=0)
     # Date when the user rated or watched
     date_creation = models.DateTimeField(null=False)
     # If the video was forced to be watched or notified
     watched_type = models.CharField(max_length=15)
     rating_implicit = models.DecimalField(decimal_places=9, max_digits=10, default=0)
-    rating_explicit = models.DecimalField(decimal_places=9, max_digits=10, default=0)
+    rating_explicit = models.DecimalField(decimal_places=9, max_digits=10, default=None, null=True)
     overall_rating_value = models.DecimalField(decimal_places=9, max_digits=10, default=0)
 
     def __str__(self):

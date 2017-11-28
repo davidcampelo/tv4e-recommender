@@ -1,6 +1,7 @@
 # encoding: utf-8
 import logging
 import pandas as pd
+import numpy as np
 import requests
 import redis
 import dateutil
@@ -133,7 +134,9 @@ class TV4EDataConnector(object):
         # loading ratings
         data=requests.get(self.__URL_RATINGS)
         self.__dataframe_ratings=pd.DataFrame(data.json())
-        # calculate implicit and explicit ratings
+        if self.__dataframe_ratings.empty:
+            return self.__dataframe_ratings
+
         # XXX use a function to calculate implicit rating considering the video lead time
         self.__dataframe_ratings['rating_implicit'] = (self.__dataframe_ratings['video_watch_time']/100) * 0.3
         self.__dataframe_ratings['rating_explicit'] = (self.__dataframe_ratings['rating_value'])         * 0.7
@@ -141,10 +144,11 @@ class TV4EDataConnector(object):
         self.__dataframe_ratings['rating_implicit'][self.__dataframe_ratings.rating_explicit < 0] = self.__dataframe_ratings['rating_implicit'] * -1
         # create a new column to put implicit or explicit rating rating_value
         self.__dataframe_ratings['overall_rating_value'] = self.__dataframe_ratings['rating_implicit'] + self.__dataframe_ratings['rating_explicit']
-        
+
         # implicit rating is the watched time / explicit rating is the like-0-dislike
         self.__dataframe_ratings['rating_implicit'] = self.__dataframe_ratings['video_watch_time']/100
         self.__dataframe_ratings['rating_explicit'] = self.__dataframe_ratings['rating_value']
+        self.__dataframe_ratings.loc[self.__dataframe_ratings['overall_rating_value'].isnull(),'overall_rating_value'] = (self.__dataframe_ratings['video_watch_time']/100) * 0.5
 
         if self.__persist_to_db:
             Rating.objects.all().delete()
@@ -154,13 +158,13 @@ class TV4EDataConnector(object):
                         user=User.objects.only('id').get(id=row.user_id),
                         video=Video.objects.only('id').get(id=row.video_id),
                         watch_time=row.video_watch_time,
-                        value=row.rating_value,
                         date_creation=pytz.utc.localize(dateutil.parser.parse(row.rating_date_creation)),
                         watched_type=row.video_watched_type,
                         rating_implicit=row.rating_implicit,
-                        rating_explicit=row.rating_explicit,
                         overall_rating_value=row.overall_rating_value
                     )
+                    if not np.isnan(row.rating_explicit):
+                        rating.rating_explicit = row.rating_explicit
                     rating.save()
                 except:
                     logging.error("Error while saving Rating: user_id={} video_id={}".format(row.user_id, row.video_id))
