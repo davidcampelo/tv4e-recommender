@@ -188,7 +188,7 @@ class TV4EDataConnector(object):
                         rating_implicit=row.rating_implicit,
                         overall_rating_value=row.overall_rating_value
                     )
-                    if row.rating_explicit:
+                    if row.rating_explicit and not np.isnan (row.rating_explicit):
                         rating.rating_explicit = row.rating_explicit
                     rating.save()
                 except:
