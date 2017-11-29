@@ -123,6 +123,44 @@ class TV4EDataConnector(object):
 
         return self.__dataframe_videos
 
+    def __pre_handle_ratings_data(self):
+        """
+        Clean ratings data and create implicit/explicit fields
+        """
+        # XXX ensuring the ratings format
+        if self.__dataframe_ratings.empty:
+            self.__dataframe_ratings = pd.DataFrame(columns=['user_id', 'video_id', 'video_watch_time', 'rating_date_creation', 'rating_value', 'video_watched_type'])
+
+        # XXX use a function to calculate implicit rating considering the video lead time
+        self.__dataframe_ratings['rating_implicit'] = (self.__dataframe_ratings['video_watch_time']/100) * 0.3
+        self.__dataframe_ratings['rating_explicit'] = (self.__dataframe_ratings['rating_value'])         * 0.7
+        # If the explicit rating was negative, the implicit will be negative
+        self.__dataframe_ratings['rating_implicit'][self.__dataframe_ratings.rating_explicit < 0] =                      \
+            self.__dataframe_ratings['rating_implicit'] * -1
+        # create a new column to put implicit or explicit rating rating_value
+        self.__dataframe_ratings['overall_rating_value'] =                                                                \
+            self.__dataframe_ratings['rating_implicit'] + self.__dataframe_ratings['rating_explicit']
+
+        # implicit rating is the watched time / explicit rating is the like-0-dislike
+        self.__dataframe_ratings['rating_implicit'] = self.__dataframe_ratings['video_watch_time']/100
+        self.__dataframe_ratings['rating_explicit'] = self.__dataframe_ratings['rating_value']
+        self.__dataframe_ratings['overall_rating_value']=self.__dataframe_ratings['overall_rating_value'].fillna(0)
+        # self.__dataframe_ratings.loc[self.__dataframe_ratings['overall_rating_value'].isnull(),'overall_rating_value'] = (self.__dataframe_ratings['video_watch_time']/100) * 0.5
+        
+        # Right now, the overall rating will be NONE/NaN if no explicit rating was set
+        # So, we just consider the implicit rating if the user has seen at least 25% of the video
+        self.__dataframe_ratings.loc[                                                                                     \
+            (self.__dataframe_ratings['overall_rating_value'] == 0) &                                                  \
+            (self.__dataframe_ratings['video_watch_time'] > 25),'overall_rating_value'] =                                 \
+            (self.__dataframe_ratings['video_watch_time']/100) * 0.5
+
+    def __post_handle_ratings_data(self):
+        """
+        Remove all zero ratings (speed!)
+        """
+        self.__dataframe_ratings = self.__dataframe_ratings[self.__dataframe_ratings.overall_rating_value > 0]
+
+
     def load_ratings(self):
         """
         Loads the DataFrame with contents. 
@@ -135,22 +173,7 @@ class TV4EDataConnector(object):
         data=requests.get(self.__URL_RATINGS)
         self.__dataframe_ratings=pd.DataFrame(data.json())
         
-        # XXX ensuring the ratings format
-        if self.__dataframe_ratings.empty:
-            self.__dataframe_ratings = pd.DataFrame(columns=['user_id', 'video_id', 'video_watch_time', 'rating_date_creation', 'rating_value', 'video_watched_type'])
-
-        # XXX use a function to calculate implicit rating considering the video lead time
-        self.__dataframe_ratings['rating_implicit'] = (self.__dataframe_ratings['video_watch_time']/100) * 0.3
-        self.__dataframe_ratings['rating_explicit'] = (self.__dataframe_ratings['rating_value'])         * 0.7
-        # If the explicit rating was negative, the implicit will be negative
-        self.__dataframe_ratings['rating_implicit'][self.__dataframe_ratings.rating_explicit < 0] = self.__dataframe_ratings['rating_implicit'] * -1
-        # create a new column to put implicit or explicit rating rating_value
-        self.__dataframe_ratings['overall_rating_value'] = self.__dataframe_ratings['rating_implicit'] + self.__dataframe_ratings['rating_explicit']
-
-        # implicit rating is the watched time / explicit rating is the like-0-dislike
-        self.__dataframe_ratings['rating_implicit'] = self.__dataframe_ratings['video_watch_time']/100
-        self.__dataframe_ratings['rating_explicit'] = self.__dataframe_ratings['rating_value']
-        self.__dataframe_ratings.loc[self.__dataframe_ratings['overall_rating_value'].isnull(),'overall_rating_value'] = (self.__dataframe_ratings['video_watch_time']/100) * 0.5
+        self.__pre_handle_ratings_data()
 
         if self.__persist_to_db:
             Rating.objects.all().delete()
@@ -165,12 +188,14 @@ class TV4EDataConnector(object):
                         rating_implicit=row.rating_implicit,
                         overall_rating_value=row.overall_rating_value
                     )
-                    if not np.isnan(row.rating_explicit):
+                    if row.rating_explicit:
                         rating.rating_explicit = row.rating_explicit
                     rating.save()
                 except:
                     logging.error("Error while saving Rating: user_id={} video_id={}".format(row.user_id, row.video_id))
                     traceback.print_exc()
+
+        self.__post_handle_ratings_data()
 
         logging.debug("Ratings data loaded! n=%s" % self.__dataframe_ratings.shape[0])
 
