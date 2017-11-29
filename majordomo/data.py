@@ -134,8 +134,10 @@ class TV4EDataConnector(object):
         # loading ratings
         data=requests.get(self.__URL_RATINGS)
         self.__dataframe_ratings=pd.DataFrame(data.json())
+        
+        # XXX ensuring the ratings format
         if self.__dataframe_ratings.empty:
-            return self.__dataframe_ratings
+            self.__dataframe_ratings = pd.DataFrame(columns=['user_id', 'video_id', 'video_watch_time', 'rating_date_creation', 'rating_value', 'video_watched_type'])
 
         # XXX use a function to calculate implicit rating considering the video lead time
         self.__dataframe_ratings['rating_implicit'] = (self.__dataframe_ratings['video_watch_time']/100) * 0.3
