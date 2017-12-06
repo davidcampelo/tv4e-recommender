@@ -186,6 +186,8 @@ class ContentBasedRecommender(object):
             for idx, row in user_ratings.iterrows():
                 # print('i = %s rating = %s video_id = %s' % (i, row.overall_rating_value, row.video_id))
                 # print('tokens = %s' % self.__tfidf_tokens_dict[row.video_id])
+                if (row.overall_rating_value == 0):
+                    continue
 
                 # Apply time decay to ratings also!
                 timedelta = self.__NOW - dateutil.parser.parse(row.rating_date_creation)

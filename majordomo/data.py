@@ -123,7 +123,7 @@ class TV4EDataConnector(object):
 
         return self.__dataframe_videos
 
-    def __pre_handle_ratings_data(self):
+    def __clean_ratings_data(self):
         """
         Clean ratings data and create implicit/explicit fields
         """
@@ -135,7 +135,7 @@ class TV4EDataConnector(object):
         self.__dataframe_ratings['rating_implicit'] = (self.__dataframe_ratings['video_watch_time']/100) * 0.3
         self.__dataframe_ratings['rating_explicit'] = (self.__dataframe_ratings['rating_value'])         * 0.7
         # If the explicit rating was negative, the implicit will be negative
-        self.__dataframe_ratings['rating_implicit'][self.__dataframe_ratings.rating_explicit < 0] =                      \
+        self.__dataframe_ratings.loc[(self.__dataframe_ratings.rating_explicit < 0), 'rating_implicit'] =                 \
             self.__dataframe_ratings['rating_implicit'] * -1
         # create a new column to put implicit or explicit rating rating_value
         self.__dataframe_ratings['overall_rating_value'] =                                                                \
@@ -148,18 +148,18 @@ class TV4EDataConnector(object):
         # self.__dataframe_ratings.loc[self.__dataframe_ratings['overall_rating_value'].isnull(),'overall_rating_value'] = (self.__dataframe_ratings['video_watch_time']/100) * 0.5
         
         # Right now, the overall rating will be NONE/NaN if no explicit rating was set
-        # So, we just consider the implicit rating if the user has seen at least 25% of the video
+        # So, we consider the implicit rating as positive if the user has seen at least 20% of the video
         self.__dataframe_ratings.loc[                                                                                     \
             (self.__dataframe_ratings['overall_rating_value'] == 0) &                                                  \
-            (self.__dataframe_ratings['video_watch_time'] > 25),'overall_rating_value'] =                                 \
+            (self.__dataframe_ratings['video_watch_time'] >= 20),'overall_rating_value'] =                                 \
             (self.__dataframe_ratings['video_watch_time']/100) * 0.5
-
-    def __post_handle_ratings_data(self):
-        """
-        Remove all zero ratings (speed!)
-        """
-        self.__dataframe_ratings = self.__dataframe_ratings[self.__dataframe_ratings.overall_rating_value > 0]
-
+        # And negative if the user has seen less than 20% of the video
+        # NOTE: This code was commented as it's hard to inbfer negative ratings, specially 
+        #       if the user hadn't had enough of the content !!!!
+        # self.__dataframe_ratings.loc[                                                                                     \
+        #     (self.__dataframe_ratings['overall_rating_value'] == 0) &                                                  \
+        #     (self.__dataframe_ratings['video_watch_time'] < 20),'overall_rating_value'] =                                 \
+        #     (self.__dataframe_ratings['video_watch_time']/100 - 1) * 0.5
 
     def load_ratings(self):
         """
@@ -173,7 +173,7 @@ class TV4EDataConnector(object):
         data=requests.get(self.__URL_RATINGS)
         self.__dataframe_ratings=pd.DataFrame(data.json())
         
-        self.__pre_handle_ratings_data()
+        self.__clean_ratings_data()
 
         if self.__persist_to_db:
             Rating.objects.all().delete()
@@ -194,8 +194,6 @@ class TV4EDataConnector(object):
                 except:
                     logging.error("Error while saving Rating: user_id={} video_id={}".format(row.user_id, row.video_id))
                     traceback.print_exc()
-
-        self.__post_handle_ratings_data()
 
         logging.debug("Ratings data loaded! n=%s" % self.__dataframe_ratings.shape[0])
 
