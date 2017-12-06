@@ -1,0 +1,18 @@
+[
+        {
+        "user_id": 1,
+        "video_id": 4482,
+        "video_watch_time": 4,
+        "rating_date_creation": "2017-11-28 19:00:24",
+        "rating_value": null,
+        "video_watched_type": "forced"
+        },
+        {
+        "user_id": 1,
+        "video_id": 4650,
+        "video_watch_time": 13,
+        "rating_date_creation": "2017-11-28 18:59:49",
+        "rating_value": null,
+        "video_watched_type": "forced"
+        }
+]
