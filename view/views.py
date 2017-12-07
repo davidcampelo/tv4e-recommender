@@ -84,7 +84,7 @@ class UserIndexView(generic.ListView):
 
 def user_detail(request, user_id):
     item = User.objects.get(pk=user_id)
-    ratings = Rating.objects.filter(user_id=user_id)
+    ratings = Rating.objects.filter(user_id=user_id).order_by('date_creation')
     context = {'item': item, 'ratings': ratings} 
     if len(ratings) > 0:
         mean = ratings.aggregate(value=Avg('overall_rating_value'))
