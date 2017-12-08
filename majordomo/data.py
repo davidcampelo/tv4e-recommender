@@ -71,6 +71,7 @@ class TV4EDataConnector(object):
                         user=User(
                             id=row.user_id,
                             age=row.user_age,
+                            name=row.user_name,
                             gender=row.user_gender,
                             city=City.objects.only('id').get(id=row.city_id),
                             coordinates=row.user_coordinates,
@@ -78,6 +79,7 @@ class TV4EDataConnector(object):
                     else:
                         user = User.objects.get(id=row.user_id)
                         user.age=row.user_age
+                        user.name=row.user_name
                         user.gender=row.user_gender
                         user.city=City.objects.get(id=row.city_id)
                         user.coordinates=row.user_coordinates
