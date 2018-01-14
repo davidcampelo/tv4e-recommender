@@ -176,9 +176,10 @@ class TV4EDataConnector(object):
         self.__dataframe_ratings =                                                                                         \
             self.__dataframe_ratings[(self.__dataframe_ratings.rating_date_diff.dt.days < self.__RATINGS_VALIDITY_IN_DAYS)]
 
-        # Cutting off ZEROed ratings
-        self.__dataframe_ratings =                                                                                         \
-            self.__dataframe_ratings[(self.__dataframe_ratings.overall_rating_value > 0)]
+        # WE CANNOT IGNORE ZEROED RATINGS, AS IF SO WE MIGHT RECOMMEND S/THING THE USER HAS ALREADY RECEIVED!
+        # # Cutting off ZEROed ratings
+        # self.__dataframe_ratings =                                                                                         \
+        #     self.__dataframe_ratings[(self.__dataframe_ratings.overall_rating_value > 0)]
 
 
         # And negative if the user has seen less than 20% of the video
