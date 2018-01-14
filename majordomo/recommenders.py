@@ -50,8 +50,8 @@ class TimeDecayFilter(object):
         if user_recommendations is None:
             # XXX Double checking to avoid already recommended items - if clause down there :)
             filtered_recommendations = [(row.video_id, row.video_date_creation, "")
-                                        for index,row in self.__dataframe_videos[:-n_recommendations-1:-1].iterrows()
-                                        if row.video_id not in dataframe_user_ratings.video_id.values]
+                                        for index,row in self.__dataframe_videos.iterrows()
+                                        if row.video_id not in dataframe_user_ratings.video_id.values][:-n_recommendations-1:-1]
             return filtered_recommendations
         else:
             # Apply time decay algorithm to the list
