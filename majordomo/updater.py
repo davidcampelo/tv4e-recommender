@@ -71,11 +71,13 @@ class Updater(LockedModel):
                 user_id = user.user_id
                 dataframe_user_ratings = dataframe_ratings[dataframe_ratings.user_id == user_id]
                 # If the user has at least one rating
-                user_recommendations = content_based_rec.calculate_recommendations(user_id, dataframe_user_ratings)
+                user_recommendations = content_based_rec.calculate_recommendations(user_id=user_id, 
+                                                                                   dataframe_user_ratings=dataframe_user_ratings)
 
                 # Apply the time decay
                 user_recommendations = time_filter.filter(n_recommendations=settings.NUMBER_OF_RECOMMENDATIONS,
                                                           user_id=user_id,
+                                                          dataframe_user_ratings=dataframe_user_ratings,
                                                           user_recommendations=user_recommendations)
 
                 # XXX Save it!

@@ -19,6 +19,11 @@ from django.conf import settings
 logging.basicConfig(format='[%(asctime)s] %(levelname)s - %(message)s', level=logging.DEBUG)
 
 
+class NoValidRatingsFoundException(Exception):
+    """Exception thrown if no valid ratings are found in the process of calculating user profile"""
+    pass
+
+
 class GeographicFilter(object):
 
     def __init__(self, dataframe_videos):
@@ -39,12 +44,14 @@ class TimeDecayFilter(object):
         self.__dataframe_videos=self.__dataframe_videos.sort_values(['video_date_creation'])
         self.__NOW = datetime.datetime.now()
 
-    def filter(self, user_id, user_recommendations, n_recommendations=settings.NUMBER_OF_RECOMMENDATIONS):
+    def filter(self, user_id, user_recommendations, dataframe_user_ratings, n_recommendations=settings.NUMBER_OF_RECOMMENDATIONS):
         logging.debug("Filtering time decay recommendations for user_id={} n_recommendations={}".format(user_id, n_recommendations))
         # COLD-START handling: If no recommendations are passed, retuns the latest ones 
         if user_recommendations is None:
+            # XXX Double checking to avoid already recommended items - if clause down there :)
             filtered_recommendations = [(row.video_id, row.video_date_creation, "")
-                                        for index,row in self.__dataframe_videos[:-n_recommendations-1:-1].iterrows()]
+                                        for index,row in self.__dataframe_videos[:-n_recommendations-1:-1].iterrows()
+                                        if row.video_id not in dataframe_user_ratings.video_id.values]
             return filtered_recommendations
         else:
             # Apply time decay algorithm to the list
@@ -179,6 +186,9 @@ class ContentBasedRecommender(object):
         #   computed with weighted sum of the item vectors for all items, with weights being based on the 
         #   user's rating."
         #   See: http://eugenelin89.github.io/recommender_content_based/
+        if (user_ratings.shape[0] == 0):
+            raise NoValidRatingsFoundException
+
         user_profile = [0] * len(self.__tfidf_vectorizer.get_feature_names())
         logging.debug("Calculating content-based user profile for user_id={} n_ratings={}".format(user_id, user_ratings.shape[0]))
         for idx, row in user_ratings.iterrows():
@@ -200,8 +210,10 @@ class ContentBasedRecommender(object):
                 # user_profile = [v/len(user_ratings) for v in user_profile] # weight-ing user vector (?)
         # normalize user profile vector
         normal_factor = np.linalg.norm(user_profile)
-        if normal_factor != 0:
-            user_profile = user_profile / normal_factor
+        if normal_factor == 0:
+            raise NoValidRatingsFoundException
+        
+        user_profile = user_profile / normal_factor
 
         return user_profile
 
@@ -210,12 +222,13 @@ class ContentBasedRecommender(object):
         # See: http://eugenelin89.github.io/recommender_content_based/
         logging.debug("Calculating content-based recommendations for user_id={} n_similar={} n_ratings={}".
               format(user_id, self.__n_similar, dataframe_user_ratings.shape[0]))
-        if dataframe_user_ratings.shape[0] == 0:
-            logging.warning("No ratings found for user_id={}".format(user_id))
+        try:
+            user_profile = self.__calculate_user_profile(user_id, dataframe_user_ratings)
+        except NoValidRatingsFoundException:
+            logging.warning("No valid ratings found for user_id={}".format(user_id))
             return None
 
         n_similar = (self.__n_similar + 1)
-        user_profile = self.__calculate_user_profile(user_id, dataframe_user_ratings)
         # calculate similarity using cosine
         user_recommendations = []
         for video_id, token_weights in self.__tfidf_tokens_dict.items():
