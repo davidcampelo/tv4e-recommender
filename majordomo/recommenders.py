@@ -183,6 +183,8 @@ class ContentBasedRecommender(object):
         logging.debug("Calculating content-based user profile for user_id={} n_ratings={}".format(user_id, user_ratings.shape[0]))
         for idx, row in user_ratings.iterrows():
 
+            if row.overall_rating_value == 0:
+                continue
             weighted_rating = float(row.overall_rating_value/(row.rating_date_diff.days + 1))
 
             for i in range(len(user_profile)):
@@ -197,7 +199,10 @@ class ContentBasedRecommender(object):
                 user_profile[i] += weighted_rating * weight_of_word
                 # user_profile = [v/len(user_ratings) for v in user_profile] # weight-ing user vector (?)
         # normalize user profile vector
-        user_profile = user_profile / np.linalg.norm(user_profile)
+        normal_factor = np.linalg.norm(user_profile)
+        if normal_factor != 0:
+            user_profile = user_profile / normal_factor
+
         return user_profile
 
     def calculate_recommendations(self, user_id, dataframe_user_ratings):
