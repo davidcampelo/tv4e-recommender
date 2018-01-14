@@ -7,6 +7,7 @@ import redis
 import dateutil
 import pytz
 import traceback
+import datetime
 
 from majordomo.models import City,User,Asgie,Video,Rating
 
@@ -45,6 +46,8 @@ class TV4EDataConnector(object):
     __URL_VIDEOS = 'http://api_mysql.tv4e.pt/api/recommendations/videos'
     __URL_RATINGS = 'http://api_mysql.tv4e.pt/api/recommendations/ratings'
     __URL_USERS = 'http://api_mysql.tv4e.pt/api/recommendations/users'
+    __NOW = datetime.datetime.now()
+    __RATINGS_VALIDITY_IN_DAYS = 14
 
     def __init__(self, persist_to_db=False):
         self.__persist_to_db = persist_to_db
@@ -125,9 +128,9 @@ class TV4EDataConnector(object):
 
         return self.__dataframe_videos
 
-    def __clean_ratings_data(self):
+    def __pre_clean_ratings_data(self):
         """
-        Clean ratings data and create implicit/explicit fields
+        Create and calculate implicit/explicit ratings fields
         """
         # XXX ensuring the ratings format
         if self.__dataframe_ratings.empty:
@@ -155,6 +158,29 @@ class TV4EDataConnector(object):
             (self.__dataframe_ratings['overall_rating_value'] == 0) &                                                  \
             (self.__dataframe_ratings['video_watch_time'] >= 20),'overall_rating_value'] =                                 \
             (self.__dataframe_ratings['video_watch_time']/100) * 0.5
+
+
+    def __post_clean_ratings_data(self):
+        """
+        Cutt off unused rating rows 
+        """
+       # Removed forced ratings (created by pressing BACK key on the remote). 
+        # These ratings are usually created during the initial demonstration
+        self.__dataframe_ratings = self.__dataframe_ratings[(self.__dataframe_ratings.video_watched_type != 'forced')]
+
+        # Create a new column to indicate the difference between the current date and the date of creation of the rating
+        self.__dataframe_ratings['rating_date_diff'] =                                                                     \
+             self.__NOW - pd.to_datetime(self.__dataframe_ratings['rating_date_creation'])
+        # Cutting off ratings created before some days (we don't want ratings created before XX days)
+        # Rationale: algorithm was too slow already!!!!
+        self.__dataframe_ratings =                                                                                         \
+            self.__dataframe_ratings[(self.__dataframe_ratings.rating_date_diff.dt.days < self.__RATINGS_VALIDITY_IN_DAYS)]
+
+        # Cutting off ZEROed ratings
+        self.__dataframe_ratings =                                                                                         \
+            self.__dataframe_ratings[(self.__dataframe_ratings.overall_rating_value > 0)]
+
+
         # And negative if the user has seen less than 20% of the video
         # NOTE: This code was commented as it's hard to inbfer negative ratings, specially 
         #       if the user hadn't had enough of the content !!!!
@@ -175,7 +201,7 @@ class TV4EDataConnector(object):
         data=requests.get(self.__URL_RATINGS)
         self.__dataframe_ratings=pd.DataFrame(data.json())
         
-        self.__clean_ratings_data()
+        self.__pre_clean_ratings_data()
 
         if self.__persist_to_db:
             Rating.objects.all().delete()
@@ -198,6 +224,10 @@ class TV4EDataConnector(object):
                     traceback.print_exc()
 
         logging.debug("Ratings data loaded! n=%s" % self.__dataframe_ratings.shape[0])
+
+        self.__post_clean_ratings_data()
+
+        logging.debug("Ratings data cleaned! n=%s" % self.__dataframe_ratings.shape[0])
 
         return self.__dataframe_ratings
 

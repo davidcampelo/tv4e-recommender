@@ -15,9 +15,8 @@ import dateutil
 
 from majordomo.models import Video
 
+from django.conf import settings
 logging.basicConfig(format='[%(asctime)s] %(levelname)s - %(message)s', level=logging.DEBUG)
-
-NUMBER_OF_RECOMMENDATIONS = 4
 
 
 class GeographicFilter(object):
@@ -40,7 +39,7 @@ class TimeDecayFilter(object):
         self.__dataframe_videos=self.__dataframe_videos.sort_values(['video_date_creation'])
         self.__NOW = datetime.datetime.now()
 
-    def filter(self, user_id, user_recommendations, n_recommendations=NUMBER_OF_RECOMMENDATIONS):
+    def filter(self, user_id, user_recommendations, n_recommendations=settings.NUMBER_OF_RECOMMENDATIONS):
         logging.debug("Filtering time decay recommendations for user_id={} n_recommendations={}".format(user_id, n_recommendations))
         # COLD-START handling: If no recommendations are passed, retuns the latest ones 
         if user_recommendations is None:
@@ -66,7 +65,7 @@ class ContentBasedRecommender(object):
 
     __NUMBER_OF_ASGIE_TYPES = 7
 
-    def __init__(self, n_similar=NUMBER_OF_RECOMMENDATIONS, dataframe_videos=None):
+    def __init__(self, n_similar=settings.NUMBER_OF_RECOMMENDATIONS, dataframe_videos=None):
         self.__n_similar = n_similar
         self.__dataframe_videos = dataframe_videos
 
@@ -182,17 +181,19 @@ class ContentBasedRecommender(object):
         #   See: http://eugenelin89.github.io/recommender_content_based/
         user_profile = [0] * len(self.__tfidf_vectorizer.get_feature_names())
         logging.debug("Calculating content-based user profile for user_id={} n_ratings={}".format(user_id, user_ratings.shape[0]))
-        for i in range(len(user_profile)):
-            for idx, row in user_ratings.iterrows():
-                # print('i = %s rating = %s video_id = %s' % (i, row.overall_rating_value, row.video_id))
-                # print('tokens = %s' % self.__tfidf_tokens_dict[row.video_id])
-                if (row.overall_rating_value == 0):
-                    continue
+        for idx, row in user_ratings.iterrows():
 
+            weighted_rating = float(row.overall_rating_value/(row.rating_date_diff.days + 1))
+
+            for i in range(len(user_profile)):
                 # Apply time decay to ratings also!
-                timedelta = self.__NOW - dateutil.parser.parse(row.rating_date_creation)
-                weighted_rating = float(row.overall_rating_value/(timedelta.days + 1))
-                weight_of_word = float(self.__tfidf_tokens_dict[row.video_id][i])
+                # timedelta = self.__NOW - dateutil.parser.parse(row.rating_date_creation)
+                # weighted_rating = float(row.overall_rating_value/(timedelta.days + 1))
+                try:
+                    weight_of_word = float(self.__tfidf_tokens_dict[row.video_id][i])
+                except:
+                    logging.error("Token not found! video_id={} user_id={}".format(row.video_id, user_id))
+                    break
                 user_profile[i] += weighted_rating * weight_of_word
                 # user_profile = [v/len(user_ratings) for v in user_profile] # weight-ing user vector (?)
         # normalize user profile vector
