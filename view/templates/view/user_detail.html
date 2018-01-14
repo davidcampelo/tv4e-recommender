@@ -14,7 +14,11 @@
 
             $.getJSON(url, 
                 function(result) {
+                    var count = 0;
                     result.data.forEach(function(element, index, array) {
+                        if (++count > 4)
+                            return;
+
                         image_url = '/static/img/'+  element.asgie_image
 
                         rec_div = document.createElement('div')

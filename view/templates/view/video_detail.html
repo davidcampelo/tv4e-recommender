@@ -15,7 +15,12 @@
 
             $.getJSON(url, 
                 function(result) {
+                    var i = 0
                     result.data.forEach(function(element, index, array) {
+                        // 4 is the maximum number of videos to show
+                        if (++i > 4)
+                            return;
+                        
                         image_url = '/static/img/'+  element.asgie_image
 
                         rec_div = document.createElement('div')
@@ -56,7 +61,7 @@
                     <li>URL: <a href="{{video.av_resource.url}}">{{video.av_resource.url}}</a></li>
                     <li>ASGIE: {{video.asgie.title_pt}}</li>
                     <li>Data: {{video.date_creation}}</li>
-                    <li>Location: {{video.location| default:"ALL"}}</li>
+                    <li>Location: {{video.location}}</li>
                     <li>Text:</li>
                     <p>{{video.desc}}</p>
                     <li>Tokens:</li>
