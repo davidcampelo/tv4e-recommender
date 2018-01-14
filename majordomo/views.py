@@ -153,7 +153,7 @@ def dictfetchall(cursor):
 def ratings_distribution(request):
     cursor = connection.cursor()
     cursor.execute("""
-    select round(overall_rating_value,3) as classificação, count(*) as quantidade
+    select round(overall_rating_value,1) as classificação, count(*) as quantidade
     from majordomo_rating
     group by classificação
     order by classificação
