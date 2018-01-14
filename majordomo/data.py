@@ -111,16 +111,27 @@ class TV4EDataConnector(object):
         # self.__dataframe_videos = self.__dataframe_videos.transpose()
         if self.__persist_to_db:
             for index, row in self.__dataframe_videos.iterrows():
-                if Video.objects.filter(pk=row.video_id).count() == 0:
-                    video=Video(
-                        id=row.video_id,
-                        title=row.video_title,
-                        desc=row.video_desc,
-                        date_creation=pytz.utc.localize(dateutil.parser.parse(row.video_date_creation)),
-                        location=row.video_location,
-                        asgie=Asgie.objects.only('id').get(id=row.video_asgie_id)
-                    )
+                try:
+                    if Video.objects.filter(pk=row.video_id).count() == 0:
+                        video=Video(
+                            id=row.video_id,
+                            title=row.video_title,
+                            desc=row.video_desc,
+                            date_creation=pytz.utc.localize(dateutil.parser.parse(row.video_date_creation)),
+                            location=row.video_location,
+                            asgie=Asgie.objects.only('id').get(id=row.video_asgie_id)
+                        )
+                    else:
+                        video = Video.objects.get(id=row.video_id)
+                        video.title=row.video_title
+                        video.desc=row.video_desc
+                        video.date_creation=pytz.utc.localize(dateutil.parser.parse(row.video_date_creation))
+                        video.location=row.video_location
+                        video.asgie=Asgie.objects.only('id').get(id=row.video_asgie_id)
                     video.save()
+                except:
+                    logging.error("Error while saving Video: video_id={}".format(row.video_id))
+                    traceback.print_exc()
 
         self.__dataframe_videos['video_contents'] = self.__dataframe_videos[['video_title', 'video_desc']].\
             apply(lambda x: " ".join(x), axis=1)
