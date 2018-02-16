@@ -77,7 +77,6 @@ class LocationPrioritizer(object):
     def filter(self, user_id, user_recommendations, n_recommendations=settings.NUMBER_OF_RECOMMENDATIONS):
         logging.debug("priorizatizing location for user_id={} n_recommendations={}".format(user_id, n_recommendations))
         # Apply priorization algorithm to the list
-        print(user_recommendations)
         filtered_recommendations = []
         for item in user_recommendations:
             if len(item[3]) > 0 and int(item[3]) == int(self.__user_location):
