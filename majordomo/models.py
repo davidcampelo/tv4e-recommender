@@ -39,7 +39,7 @@ class Video(models.Model):
     # `desc` LONGTEXT CHARACTER SET 'utf8' NOT NULL ;
     desc = models.TextField()
     date_creation = models.DateTimeField(blank=False, null=False)
-    location = models.CharField(max_length=1, null=True, blank=True)
+    location = models.CharField(max_length=3, null=True, blank=True)
     asgie = models.ForeignKey(Asgie, null=False)
     tokens = models.TextField(null=False)
 
