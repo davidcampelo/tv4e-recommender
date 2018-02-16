@@ -35,7 +35,7 @@ class RedisConnector(object):
 
     def save_user_recommendations(self, user_id, user_recommendations, default_key, separator):
         key = "%s%s%s" % (default_key, separator, user_id)
-        logging.debug("Saving user recommendations user_id={} n_recommendations={} key={}".format(user_id, len(user_recommendations), key))
+        logging.debug("Saving user recommendations user_id={} n_recommendations={} key={} values={}".format(user_id, len(user_recommendations), key, user_recommendations))
         self.__redis.delete(key)
         for item in user_recommendations:
             # item[0] == video_id
@@ -169,6 +169,13 @@ class TV4EDataConnector(object):
             (self.__dataframe_ratings['video_watch_time'] >= self.__MINIMUM_AMOUNT_OF_VIDEO_TO_CONSIDER_RATED),           \
                 'overall_rating_value'] = (self.__dataframe_ratings['video_watch_time']/100) * 0.5
 
+        # If the explicit rating screen was shown but not answered, we also require this MINIMUM %
+        # of time to consider this rating
+        self.__dataframe_ratings.loc[
+            (pd.isnull(self.__dataframe_ratings['rating_value'])) &  
+            (self.__dataframe_ratings['video_watch_time'] < self.__MINIMUM_AMOUNT_OF_VIDEO_TO_CONSIDER_RATED),             \
+                'overall_rating_value'] = 0
+
         # Now, if the explicit rating screen was shown but not answered, we also require this MINIMUM %
         # of time to consider this rating
         self.__dataframe_ratings.loc[(self.__dataframe_ratings['rating_value'] == 0) &                                     \
@@ -177,7 +184,6 @@ class TV4EDataConnector(object):
 
         # Filling with zeros if the overall_rating is NaN
         self.__dataframe_ratings['overall_rating_value']=self.__dataframe_ratings['overall_rating_value'].fillna(0)
-
 
     def __post_clean_ratings_data(self):
         """
