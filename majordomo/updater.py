@@ -14,7 +14,7 @@ from django.conf import settings
 import logging
 import traceback
 
-from recommenders import ContentBasedRecommender, GeographicFilter, TimeDecayFilter
+from recommenders import ContentBasedRecommender, GeographicFilter, TimeDecayFilter, LocationPrioritizer
 from data import TV4EDataConnector, RedisConnector
 from lock import LockedModel, AlreadyLockedError
 
@@ -65,6 +65,7 @@ class Updater(LockedModel):
                                                         dataframe_videos=dataframe_videos_filtered)
             content_based_rec.find_similarities()
             time_filter = TimeDecayFilter(dataframe_videos=dataframe_videos_filtered)
+            location_prioritizer = LocationPrioritizer(user_location = location_id)
 
             # Calculating user recommendations
             for index, user in dataframe_users[dataframe_users.city_id == location_id].iterrows():
@@ -75,9 +76,14 @@ class Updater(LockedModel):
                                                                                    dataframe_user_ratings=dataframe_user_ratings)
 
                 # Apply the time decay
-                user_recommendations = time_filter.filter(n_recommendations=settings.NUMBER_OF_RECOMMENDATIONS,
+                user_recommendations = time_filter.filter(n_recommendations=settings.NUMBER_OF_RECOMMENDATIONS*3,
                                                           user_id=user_id,
                                                           dataframe_user_ratings=dataframe_user_ratings,
+                                                          user_recommendations=user_recommendations)
+
+                # Apply location prioritizer
+                user_recommendations = location_prioritizer.filter(n_recommendations=settings.NUMBER_OF_RECOMMENDATIONS,
+                                                          user_id=user_id,
                                                           user_recommendations=user_recommendations)
 
                 # XXX Save it!

@@ -49,7 +49,7 @@ class TimeDecayFilter(object):
         # COLD-START handling: If no recommendations are passed, retuns the latest ones 
         if user_recommendations is None:
             # XXX Double checking to avoid already recommended items - if clause down there :)
-            filtered_recommendations = [(row.video_id, row.video_date_creation, "")
+            filtered_recommendations = [(row.video_id, row.video_date_creation, 1, row.video_location)
                                         for index,row in self.__dataframe_videos.iterrows()
                                         if row.video_id not in dataframe_user_ratings.video_id.values][:-n_recommendations-1:-1]
             return filtered_recommendations
@@ -61,11 +61,42 @@ class TimeDecayFilter(object):
                 filtered_recommendations.append((
                     item[0],
                     item[1],
-                    item[2]/(1 + timedelta.days)
+                    item[2]/(1 + timedelta.days),
+                    item[3]
                 ))
 
             # Order again by the confidence
             return sorted(filtered_recommendations, key=lambda tup: tup[2], reverse=True)[:n_recommendations]
+
+
+class LocationPrioritizer(object):
+
+    def __init__(self, user_location):
+        self.__user_location = user_location
+
+    def filter(self, user_id, user_recommendations, n_recommendations=settings.NUMBER_OF_RECOMMENDATIONS):
+        logging.debug("priorizatizing location for user_id={} n_recommendations={}".format(user_id, n_recommendations))
+        # Apply priorization algorithm to the list
+        print(user_recommendations)
+        filtered_recommendations = []
+        for item in user_recommendations:
+            if len(item[3]) > 0 and int(item[3]) == int(self.__user_location):
+                filtered_recommendations.append((
+                    item[0],
+                    item[1],
+                    item[2] * 1.1,
+                    item[3]
+                ))
+            else:
+                filtered_recommendations.append((
+                    item[0],
+                    item[1],
+                    item[2],
+                    item[3]
+                ))
+
+        # Order again by the confidence
+        return sorted(filtered_recommendations, key=lambda tup: tup[2], reverse=True)[:n_recommendations]
 
 
 class ContentBasedRecommender(object):
@@ -196,6 +227,7 @@ class ContentBasedRecommender(object):
             if row.overall_rating_value == 0:
                 continue
             weighted_rating = float(row.overall_rating_value/(row.rating_date_diff.days + 1))
+            logging.info("Weighted rating={} user={}".format(weighted_rating, user_id))
 
             for i in range(len(user_profile)):
                 # Apply time decay to ratings also!
@@ -237,7 +269,8 @@ class ContentBasedRecommender(object):
                 user_recommendations.append((
                     video_id,
                     self.__dataframe_videos[(self.__dataframe_videos.video_id == video_id)].video_date_creation.values[0],
-                    cosine_similarity([user_profile], [token_weights])[0]
+                    cosine_similarity([user_profile], [token_weights])[0],
+                    self.__dataframe_videos[(self.__dataframe_videos.video_id == video_id)].video_location.values[0]
                 ))
         # order ratings by similarity
         user_recommendations = sorted(user_recommendations, key=lambda tup: tup[2], reverse=True)[:n_similar]
