@@ -70,6 +70,7 @@ class TimeDecayFilter(object):
 
 
 class LocationPrioritizer(object):
+    __PRIORITIZATION_FACTOR = 1.5
 
     def __init__(self, user_location):
         self.__user_location = user_location
@@ -83,7 +84,7 @@ class LocationPrioritizer(object):
                 filtered_recommendations.append((
                     item[0],
                     item[1],
-                    item[2] * 1.1,
+                    item[2] * self.__PRIORITIZATION_FACTOR,
                     item[3]
                 ))
             else:
