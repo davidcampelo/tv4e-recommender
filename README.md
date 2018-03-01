@@ -73,26 +73,6 @@ so you might need to try out 8002 instead.
 Please cite +TV4E Project if it helps your research. You can use the following BibTeX entries:
 ```
 [1]
-@article{SILVA2016580,
-	title = "+TV4E: Interactive Television as a Support to Push Information About Social Services to the Elderly",
-	journal = "Procedia Computer Science",
-	volume = "100",
-	number = "",
-	pages = "580 - 585",
-	year = "2016",
-	note = "International Conference on ENTERprise Information Systems/International Conference on Project MANagement/International Conference on Health and Social Care Information Systems and Technologies, CENTERIS/ProjMAN / HCist 2016",
-	issn = "1877-0509",
-	doi = "http://dx.doi.org/10.1016/j.procs.2016.09.198",
-	url = "http://www.sciencedirect.com/science/article/pii/S1877050916323663",
-	author = "Telmo Silva and Jorge Abreu and Maria Antunes and Pedro Almeida and Valter Silva and Gonçalo Santinha",
-	keywords = "Seniors",
-	keywords = "iTV",
-	keywords = "Health",
-	keywords = "quality of life",
-	keywords = "Social Services",
-	keywords = "Public Services"
-}
-[2]
 @inproceedings{Campelo:2017:RPI:3084289.3084292,
 	 author = {Campelo, David and Silva, Telmo and Ferraz de Abreu, Jorge},
 	 title = {Recommending Personalized Informative Contents on iTV},
