@@ -12,6 +12,7 @@ from sklearn.metrics.pairwise import linear_kernel, cosine_similarity
 from sklearn.decomposition import TruncatedSVD
 import datetime
 import dateutil
+import traceback
 
 from majordomo.models import Video
 
@@ -76,7 +77,7 @@ class LocationPrioritizer(object):
         self.__user_location = user_location
 
     def filter(self, user_id, user_recommendations, n_recommendations=settings.NUMBER_OF_RECOMMENDATIONS):
-        logging.debug("priorizatizing location for user_id={} n_recommendations={}".format(user_id, n_recommendations))
+        logging.debug("Prioritizing location for user_id={} n_recommendations={}".format(user_id, n_recommendations))
         # Apply priorization algorithm to the list
         filtered_recommendations = []
         for item in user_recommendations:
@@ -149,8 +150,12 @@ class ContentBasedRecommender(object):
         vectors = self.__tfidf_matrix.toarray()
         i = 0
         for video_id, row in self.__dataframe_videos.iterrows():
-            video = Video.objects.get(pk=row.video_id)
-            video.tokens = ", ".join(self.__tfidf_vectorizer.inverse_transform(vectors[i])[0])
+            try:
+                video = Video.objects.get(pk=row.video_id)
+                video.tokens = ", ".join(self.__tfidf_vectorizer.inverse_transform(vectors[i])[0])
+            except:
+                logging.error("Error while saving Video tokens: video_id={}".format(row.video_id))
+                traceback.print_exc()
             i = i+1
             video.save()
 
