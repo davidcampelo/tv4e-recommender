@@ -7,11 +7,19 @@ from django.conf import settings
 from django.db.models import Avg, Count, Q
 from django.db import connection
 
-
 import operator
 import redis
 import logging
 import traceback
+
+import matplotlib
+import matplotlib.dates as mdates
+import pandas as pd
+from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
+from matplotlib.figure import Figure
+from matplotlib import style
+from collections import Counter
+import datetime as dt
 
 from majordomo.models import Video,Rating,User
 from majordomo.updater import Updater
@@ -21,15 +29,49 @@ logging.basicConfig(format='[%(asctime)s] %(levelname)s - %(message)s', level=lo
 
 LIST_OF_DEV_USER_ID = ['1', '2', '3', '9', '21']
 
+#
+#
+def img_rating_weekday(request):
+    ratings_query = Rating.objects.exclude(Q(watched_type='forced') | Q(user_id__in=LIST_OF_DEV_USER_ID))
+    df_ratings = pd.DataFrame(list(ratings_query.values()))
+
+    df_ratings['weekday_name'] = pd.to_datetime(df_ratings['date_creation']).dt.weekday_name 
+    counter = Counter(df_ratings['weekday_name'])   
+    df_ratings_weekday = pd.DataFrame(list(counter.items()), columns=['weekday_name', 'count'])
+    # translate weekdays
+    weekdays_keys = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
+    weekdays_values = ['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado', 'Domingo']
+    weekdays_dict = dict(zip(weekdays_keys, weekdays_values))
+    df_ratings_weekday['weekday_name'].replace(weekdays_dict, inplace=True)
+
+    # create index and order df
+    def f(row):
+        return weekdays_values.index(row['weekday_name'])
+
+    df_ratings_weekday['weekday_id'] = df_ratings_weekday.apply(f, axis=1)
+    df_ratings_weekday = df_ratings_weekday.set_index('weekday_id').sort_index()
+
+    # Plot figure
+    fig = Figure()
+    ax=fig.add_subplot(1,1,1)
+    ax.set_title('Distribuição diária das classificações', fontsize='medium')
+    ax.bar(df_ratings_weekday.index, df_ratings_weekday['count'], color='#428bca', width=0.9)
+    ax.set_ylabel('Quantidade', fontsize='small')
+    ax.set_xlabel('Dia da semana', fontsize='small')
+    ax.set_xticks(range(len(weekdays_values)))
+    ax.set_xticklabels(weekdays_values)
+    ax.grid(True)
+    fig.subplots_adjust(right=0.97, top=0.95, left=0.09, bottom=0.10)
+
+    # Create response object
+    canvas = FigureCanvas(fig)
+    response = HttpResponse(content_type='image/png')
+    canvas.print_png(response)
+
+    return response
+
 def img_rating_dailyevolution(request):
-    import matplotlib
-    import matplotlib.dates as mdates
-    import pandas as pd
-    from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
-    from matplotlib.figure import Figure
-    from matplotlib import style
-    from collections import Counter
-    import datetime as dt
+
     style.use('ggplot')
 
     # Grouping ratings by user
@@ -52,17 +94,18 @@ def img_rating_dailyevolution(request):
     ax2.plot([], [], color='#428bca', label='Diária')
     ax2.legend(loc='best', fontsize='small')
     for label in ax1.xaxis.get_ticklabels():
-        label.set_rotation(90)
+        label.set_rotation(45)
 
     ax1.xaxis.set_major_formatter(mdates.DateFormatter("%d/%m/%Y"))
     ax1.xaxis.set_minor_formatter(mdates.DateFormatter("%d/%m/%Y"))
 
-    fig.subplots_adjust(bottom=0.22, left=0.08)
+    fig.subplots_adjust(right=0.91, top=0.95, left=0.09, bottom=0.20)
     # fig.tight_layout()
+    ax1.set_xlabel('Data', fontsize='small')
     ax1.set_ylabel('Quantidade diária', fontsize='small')
     ax2.set_ylabel('Quantidade acumulada', fontsize='small')
-    ax1.set_xlabel('Data', fontsize='small')
-    ax1.grid(True)
+    ax1.grid(False)
+    ax2.grid(True)
 
     # Create response object
     canvas = FigureCanvas(fig)
@@ -73,11 +116,6 @@ def img_rating_dailyevolution(request):
 
 
 def img_rating_types(request):
-    import matplotlib
-    import pandas as pd
-    from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
-    from matplotlib.figure import Figure
-    from matplotlib import style
     style.use('ggplot')
 
     # Grouping ratings by user
@@ -91,7 +129,7 @@ def img_rating_types(request):
     fig = Figure()
     ax=fig.add_subplot(1,1,1)
     ax.set_title('Uso do ecrã de classificação', fontsize='medium')
-    ax.bar(range(len(df_ratings_distribution.rating_explicit)), df_ratings_distribution.counts, color='#428bca', width=0.8)
+    ax.bar(range(len(df_ratings_distribution.rating_explicit)), df_ratings_distribution.counts, color='#428bca', width=0.8,)
     ax.set_ylabel('Quantidade', fontsize='small')
     labels = ['Ecrã de classificação\n não exibido',
               'Ecrã exibido e \nvoto negativo recebido',
@@ -101,6 +139,7 @@ def img_rating_types(request):
     ax.set_xticks(range(len(df_ratings_distribution.rating_explicit)))
     ax.set_xticklabels(labels, fontsize='small')
     ax.grid(True)
+    fig.subplots_adjust(right=0.97, top=0.95, left=0.09, bottom=0.10)
 
     # Create response object
     canvas = FigureCanvas(fig)
@@ -110,11 +149,6 @@ def img_rating_types(request):
     return response
 
 def img_user_ratings(request):
-    import matplotlib
-    import pandas as pd
-    from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
-    from matplotlib.figure import Figure
-    from matplotlib import style
     style.use('ggplot')
 
     # Grouping ratings by user
@@ -134,6 +168,7 @@ def img_user_ratings(request):
     ax.set_xticks(range(len(id)))
     ax.set_xticklabels(id)
     ax.grid(True)
+    fig.subplots_adjust(right=0.97, top=0.95, left=0.09, bottom=0.10)
 
     # Create response object
     canvas = FigureCanvas(fig)
@@ -280,23 +315,7 @@ def ratings_distribution(request):
     data = dictfetchall(cursor)
     print(data)
     return JsonResponse(data, safe=False)
-#
-#
-def ratings_weekday(request):
-    ratings_query = Rating.objects.exclude(Q(watched_type='forced') | Q(user_id__in=LIST_OF_DEV_USER_ID))
-    weekday     = {"weekday": """weekday(date_creation)"""}
-    ratings_weekday = ratings_query.extra(select=weekday).values('weekday').annotate(count=Count('id')).order_by('weekday')
 
-    # XXX Work-around to include weekdays where no ratings where found
-    data = []
-    dias_da_semana = ['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado', 'Domingo']
-    for index,dia in enumerate(dias_da_semana):
-        data.append(({'dia_da_semana_num': index, 'quantidade': 0, 'dia da semana': dia[:3]}))
-
-    for index, item in enumerate(ratings_weekday):
-        data[item['weekday']]['quantidade'] = item['count']
-
-    return JsonResponse(data, safe=False)
 
 def top10(request):
     ratings_query = Rating.objects.exclude(Q(watched_type='forced') | Q(user_id__in=LIST_OF_DEV_USER_ID))

@@ -14,11 +14,11 @@ urlpatterns = [
     # analytics data
     url(r'^analytics/get_statistics', views.get_statistics, name='get_statistics'),
     url(r'^analytics/ratings_distribution', views.ratings_distribution, name='ratings_distribution'),
-    url(r'^analytics/ratings_weekday', views.ratings_weekday, name='ratings_weekday'),
     url(r'^analytics/top10', views.top10, name='top10'),
     # graphs
     url(r'^img/user_ratings', views.img_user_ratings, name='img_user_ratings'),
     url(r'^img/rating_types', views.img_rating_types, name='img_rating_types'),
     url(r'^img/rating_dailyevolution', views.img_rating_dailyevolution, name='img_rating_dailyevolution'),  
+    url(r'^img/rating_weekday', views.img_rating_weekday, name='img_rating_weekday'),
 
 ]
