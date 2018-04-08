@@ -11,15 +11,14 @@ urlpatterns = [
     url(r'^user_recommendations/(?P<user_id>\w+)/$', views.user_recommendations, name='user_recommendations'),
     # ex: /majordomo/fast_user_recommendations/1/
     url(r'^fast_user_recommendations/(?P<user_id>\w+)/$', views.fast_user_recommendations, name='fast_user_recommendations'),
-    # ex: /majordomo/analytics/get_statistics
+    # analytics data
     url(r'^analytics/get_statistics', views.get_statistics, name='get_statistics'),
-    # ex: /majordomo/analytics/ratings_distribution
     url(r'^analytics/ratings_distribution', views.ratings_distribution, name='ratings_distribution'),
-    # ex: /majordomo/analytics/ratings_dailyevolution
-    url(r'^analytics/ratings_dailyevolution', views.ratings_dailyevolution, name='ratings_dailyevolution'),
-    # ex: /majordomo/analytics/ratings_weekday
     url(r'^analytics/ratings_weekday', views.ratings_weekday, name='ratings_weekday'),
-    # ex: /majordomo/analytics/top10
     url(r'^analytics/top10', views.top10, name='top10'),
+    # graphs
+    url(r'^img/user_ratings', views.img_user_ratings, name='img_user_ratings'),
+    url(r'^img/rating_types', views.img_rating_types, name='img_rating_types'),
+    url(r'^img/rating_dailyevolution', views.img_rating_dailyevolution, name='img_rating_dailyevolution'),  
 
 ]

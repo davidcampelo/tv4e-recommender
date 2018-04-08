@@ -4,7 +4,7 @@ from __future__ import unicode_literals
 from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseServerError, JsonResponse
 from django.conf import settings
-from django.db.models import Avg, Count
+from django.db.models import Avg, Count, Q
 from django.db import connection
 
 
@@ -18,6 +18,129 @@ from majordomo.updater import Updater
 from majordomo.lock import AlreadyLockedError
 
 logging.basicConfig(format='[%(asctime)s] %(levelname)s - %(message)s', level=logging.DEBUG)
+
+LIST_OF_DEV_USER_ID = ['1', '2', '3', '9', '21']
+
+def img_rating_dailyevolution(request):
+    import matplotlib
+    import matplotlib.dates as mdates
+    import pandas as pd
+    from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
+    from matplotlib.figure import Figure
+    from matplotlib import style
+    from collections import Counter
+    import datetime as dt
+    style.use('ggplot')
+
+    # Grouping ratings by user
+    ratings_query = Rating.objects.exclude(Q(watched_type='forced') | Q(user_id__in=LIST_OF_DEV_USER_ID))
+    df_ratings = pd.DataFrame(list(ratings_query.values()))
+    df_ratings['date_creation2'] = pd.to_datetime(df_ratings['date_creation']).dt.strftime('%m/%d/%Y')
+    d = Counter(df_ratings['date_creation2'])
+    df = pd.DataFrame(list(d.items()), columns=['date_creation2', 'Count'])
+    df = df.set_index('date_creation2').sort_index()
+    df.index = pd.to_datetime(df.index)
+
+    # Plot figure
+    fig = Figure()
+    ax1=fig.add_subplot(1,1,1)
+    ax1.set_title('Evolução diária', fontsize='medium')
+    ax2 = ax1.twinx()
+
+    ax1.bar(df.index, df.Count, color='#428bca')
+    ax2.plot(df.index, df.Count.cumsum(), color='#800000', label='Acumulado')
+    ax2.plot([], [], color='#428bca', label='Diária')
+    ax2.legend(loc='best', fontsize='small')
+    for label in ax1.xaxis.get_ticklabels():
+        label.set_rotation(90)
+
+    ax1.xaxis.set_major_formatter(mdates.DateFormatter("%d/%m/%Y"))
+    ax1.xaxis.set_minor_formatter(mdates.DateFormatter("%d/%m/%Y"))
+
+    fig.subplots_adjust(bottom=0.22, left=0.08)
+    # fig.tight_layout()
+    ax1.set_ylabel('Quantidade diária', fontsize='small')
+    ax2.set_ylabel('Quantidade acumulada', fontsize='small')
+    ax1.set_xlabel('Data', fontsize='small')
+    ax1.grid(True)
+
+    # Create response object
+    canvas = FigureCanvas(fig)
+    response = HttpResponse(content_type='image/png')
+    canvas.print_png(response)
+
+    return response
+
+
+def img_rating_types(request):
+    import matplotlib
+    import pandas as pd
+    from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
+    from matplotlib.figure import Figure
+    from matplotlib import style
+    style.use('ggplot')
+
+    # Grouping ratings by user
+    ratings_query = Rating.objects.exclude(Q(watched_type='forced') | Q(user_id__in=LIST_OF_DEV_USER_ID))
+    df_ratings = pd.DataFrame(list(ratings_query.values()))
+    df_ratings.set_index('id', inplace=True)
+    df_ratings_distribution = df_ratings.fillna(-2) # using -2 to represent the scenario where no rating screen was shown
+    df_ratings_distribution = df_ratings_distribution.groupby(['rating_explicit']).size().reset_index(name='counts')
+
+    # Plot figure
+    fig = Figure()
+    ax=fig.add_subplot(1,1,1)
+    ax.set_title('Uso do ecrã de classificação', fontsize='medium')
+    ax.bar(range(len(df_ratings_distribution.rating_explicit)), df_ratings_distribution.counts, color='#428bca', width=0.8)
+    ax.set_ylabel('Quantidade', fontsize='small')
+    labels = ['Ecrã de classificação\n não exibido',
+              'Ecrã exibido e \nvoto negativo recebido',
+              'Ecrã exibido e \nvoto não recebido',
+              'Ecrã exibido e \nvoto positivo recebido']
+
+    ax.set_xticks(range(len(df_ratings_distribution.rating_explicit)))
+    ax.set_xticklabels(labels, fontsize='small')
+    ax.grid(True)
+
+    # Create response object
+    canvas = FigureCanvas(fig)
+    response = HttpResponse(content_type='image/png')
+    canvas.print_png(response)
+
+    return response
+
+def img_user_ratings(request):
+    import matplotlib
+    import pandas as pd
+    from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
+    from matplotlib.figure import Figure
+    from matplotlib import style
+    style.use('ggplot')
+
+    # Grouping ratings by user
+    ratings_query = Rating.objects.exclude(Q(watched_type='forced') | Q(user_id__in=LIST_OF_DEV_USER_ID))
+    df_ratings = pd.DataFrame(list(ratings_query.values()))
+    df_ratings.set_index('id', inplace=True)
+    df_ratings_by_user = df_ratings.groupby(['user_id']).size().reset_index(name='counts')
+    id = df_ratings_by_user.user_id.unique().astype(str)
+
+    # Plot figure
+    fig = Figure()
+    ax=fig.add_subplot(1,1,1)
+    ax.set_title('Classificações por utilizador', fontsize='medium')
+    ax.bar(range(len(id)), df_ratings_by_user.counts, color='#428bca', width=0.8)
+    ax.set_ylabel('Quantidade', fontsize='small')
+    ax.set_xlabel('ID', fontsize='small')
+    ax.set_xticks(range(len(id)))
+    ax.set_xticklabels(id)
+    ax.grid(True)
+
+    # Create response object
+    canvas = FigureCanvas(fig)
+    response = HttpResponse(content_type='image/png')
+    canvas.print_png(response)
+
+    return response
 
 
 def refresh_recommendations(request):
@@ -93,46 +216,41 @@ def get_statistics(request):
     # end_date = datetime.fromtimestamp(time.mktime(date_timestamp))
     # start_date = monthdelta(end_date, -1)
     # print("getting statics for ", start_date, " and ", end_date)
-
+    ratings_query = Rating.objects.exclude(Q(watched_type='forced') | Q(user_id__in=LIST_OF_DEV_USER_ID))
+    users_query = User.objects.exclude(Q(id__in=LIST_OF_DEV_USER_ID))
     # number of videos rated
-    videos_rated_distinct = Rating.objects.values('video_id').distinct().count()
-    videos_rated_total = Rating.objects.values('video_id').count()
+    videos_rated_distinct = ratings_query.values('video_id').distinct().count()
+    videos_rated_total = ratings_query.values('video_id').count()
 
     # number of active users
-    n_active_users = Rating.objects.values('user_id').distinct().count()
-    n_total_users = User.objects.values('id').distinct().count()
+    n_active_users = ratings_query.values('user_id').distinct().count()
+    n_total_users = users_query.values('id').distinct().count()
     active_users_percent = round(n_active_users*100/float(n_total_users), 2)
 
+    # mean videos rated by user
+    mean_videos_rated = round(videos_rated_total/n_active_users, 2)
     # mean overall rating
-    mean_rating = round(Rating.objects.aggregate(avg=Avg('overall_rating_value'))['avg'], 3)
+    mean_rating = round(ratings_query.aggregate(avg=Avg('overall_rating_value'))['avg'], 3)
+
+    # precision
+    negative_votes = ratings_query.filter(Q(rating_explicit=-1)).count()
+    positive_votes = ratings_query.filter(Q(rating_explicit=1)).count()
+    precision = round(positive_votes/(positive_votes + negative_votes) * 100, 2)
 
     # most active user (max number of ratings)
     # n_max_ratings = Rating.objects.values('user_id').annotate(count=Count('user_id')).aggregate(max=Max('count'))[0]
-    ratings_users = Rating.objects.values('user_id').annotate(count=Count('user_id'))
+    ratings_users = ratings_query.values('user_id').annotate(count=Count('user_id'))
     user = sorted(ratings_users, key=operator.itemgetter('count'))[:-2:-1][0]
     most_active_user_count = user['count']
     most_active_user_id = user['user_id']
-    most_active_user_name = User.objects.filter(pk=most_active_user_id).values('name')[0]['name']
-
-    # sessions_with_conversions = Log.objects.filter(created__range=(start_date, end_date), event='buy') \
-    #     .values('session_id').distinct()
-    # buy_data = Log.objects.filter(created__range=(start_date, end_date), event='buy') \
-    #     .values('event', 'user_id', 'content_id', 'session_id')
-    # visitors = Log.objects.filter(created__range=(start_date, end_date)) \
-    #     .values('user_id').distinct()
-    # sessions = Log.objects.filter(created__range=(start_date, end_date)) \
-    #     .values('session_id').distinct()
-
-    # if len(sessions) == 0:
-    #     conversions = 0
-    # else:
-    #     conversions = (len(sessions_with_conversions) / len(sessions)) * 100
-    #     conversions = round(conversions)
+    most_active_user_name = users_query.filter(pk=most_active_user_id).values('name')[0]['name']
 
     return JsonResponse(
         {"videos_rated_distinct": videos_rated_distinct,
          "videos_rated_total": videos_rated_total,
          "mean_rating": mean_rating,
+         "precision": precision,
+         "mean_videos_rated": mean_videos_rated,
          "most_active_user_id": most_active_user_id,
          "most_active_user_name": most_active_user_name,
          "most_active_user_count": most_active_user_count,
@@ -155,6 +273,7 @@ def ratings_distribution(request):
     cursor.execute("""
     select round(overall_rating_value,1) as classificação, count(*) as quantidade
     from majordomo_rating
+    WHERE NOT ((watched_type = 'forced' OR user_id IN ("""+ ','.join(LIST_OF_DEV_USER_ID) + """)))
     group by classificação
     order by classificação
     """)
@@ -163,61 +282,25 @@ def ratings_distribution(request):
     return JsonResponse(data, safe=False)
 #
 #
-def ratings_dailyevolution(request):
-    cursor = connection.cursor()
-    cursor.execute("""
-    select day(date_creation) as dia, count(*) as quantidade
-    from majordomo_rating
-    group by day(date_creation)
-    """)
-    data = dictfetchall(cursor)
-
-    print("data = {}".format(data))
-    data2 = []
-    dias_do_mes = [i for i in range(1,31+1)]
-    for index,dia in enumerate(dias_do_mes):
-        data2.append(({'dia': index+1, 'quantidade': 0}))
-    # print("data2 = {}".format(data2))
-
-    for index, item in enumerate(data):
-        data2[item['dia']-1]['quantidade'] = item['quantidade']
-    # print("data2 = {}".format(data2))
-
-
-    data3 = []
-    acumulado = 0
-    for index,item in enumerate(data2):
-        acumulado += item['quantidade']
-        # print("dia = %s count = %s acumulado = %s" % (item['dia'], item['quantidade'], acumulado))
-        data3.append({'dia': item['dia'], 'quantidade': item['quantidade'], 'acumulado': acumulado})
-    # print("data3 = {}".format(data2))
-
-    return JsonResponse(data3, safe=False)
-
-
-#
 def ratings_weekday(request):
-    cursor = connection.cursor()
-    cursor.execute("""
-    select weekday(date_creation) as dia_da_semana_num, count(*) as quantidade
-    from majordomo_rating
-    group by weekday(date_creation)
-    """)
-    data = dictfetchall(cursor)
+    ratings_query = Rating.objects.exclude(Q(watched_type='forced') | Q(user_id__in=LIST_OF_DEV_USER_ID))
+    weekday     = {"weekday": """weekday(date_creation)"""}
+    ratings_weekday = ratings_query.extra(select=weekday).values('weekday').annotate(count=Count('id')).order_by('weekday')
 
     # XXX Work-around to include weekdays where no ratings where found
-    data2 = []
+    data = []
     dias_da_semana = ['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado', 'Domingo']
     for index,dia in enumerate(dias_da_semana):
-        data2.append(({'dia_da_semana_num': index, 'quantidade': 0, 'dia da semana': dia[:3]}))
+        data.append(({'dia_da_semana_num': index, 'quantidade': 0, 'dia da semana': dia[:3]}))
 
-    for index, item in enumerate(data):
-        data2[item['dia_da_semana_num']]['quantidade'] = item['quantidade']
+    for index, item in enumerate(ratings_weekday):
+        data[item['weekday']]['quantidade'] = item['count']
 
-    return JsonResponse(data2, safe=False)
+    return JsonResponse(data, safe=False)
 
 def top10(request):
-    top10 = Rating.objects.values('video_id').annotate(avg=Avg('overall_rating_value')).order_by('-avg')[:10]
+    ratings_query = Rating.objects.exclude(Q(watched_type='forced') | Q(user_id__in=LIST_OF_DEV_USER_ID))
+    top10 = ratings_query.values('video_id').annotate(avg=Avg('overall_rating_value')).order_by('-avg')[:10]
     columns = ['video_id', 'video_title', 'avg_rating']
     data = []
 

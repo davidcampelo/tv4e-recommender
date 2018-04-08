@@ -62,36 +62,36 @@ function drawRatingChart(id) {
   });
 }
 
-function drawDailyEvolution(id) {
+// function drawDailyEvolution(id) {
 
-  d3.json("/majordomo/analytics/ratings_dailyevolution", function(error, eventData) {
-   var canvas = d3.select(id)
-            .append("svg")
-            .attr("width", width)
-            .attr("height", height)
-            .append('g')
-            .attr("class", 'chart');
+//   d3.json("/majordomo/analytics/ratings_dailyevolution", function(error, eventData) {
+//    var canvas = d3.select(id)
+//             .append("svg")
+//             .attr("width", width)
+//             .attr("height", height)
+//             .append('g')
+//             .attr("class", 'chart');
 
-    var myChart = new dimple.chart(canvas, eventData);
-    myChart.setBounds(40, 50,470, 220);
+//     var myChart = new dimple.chart(canvas, eventData);
+//     myChart.setBounds(40, 50,470, 220);
 
-    var x = myChart.addCategoryAxis("x", "dia");
-    var y1 = myChart.addMeasureAxis("y", "quantidade" );
-    var y2 = myChart.addMeasureAxis("y", "acumulado" );
+//     var x = myChart.addCategoryAxis("x", "dia");
+//     var y1 = myChart.addMeasureAxis("y", "quantidade" );
+//     var y2 = myChart.addMeasureAxis("y", "acumulado" );
 
-    myChart.addSeries("Diário", dimple.plot.bar, [x, y1]);
-    myChart.addSeries("Acumulado", dimple.plot.line, [x, y2]);
+//     myChart.addSeries("Diário", dimple.plot.bar, [x, y1]);
+//     myChart.addSeries("Acumulado", dimple.plot.line, [x, y2]);
 
-    myChart.addLegend(450, 15, 110, 20, "left");
+//     myChart.addLegend(450, 15, 110, 20, "left");
 
-    myChart.draw();
+//     myChart.draw();
 
-    canvas.append("text")
-          .attr("x", myChart._xPixels() + myChart._widthPixels()/2 - 50)
-          .attr("y", myChart._yPixels() - 35)
-          .text("Evolução diária");
-  });
-}
+//     canvas.append("text")
+//           .attr("x", myChart._xPixels() + myChart._widthPixels()/2 - 50)
+//           .attr("y", myChart._yPixels() - 35)
+//           .text("Evolução diária");
+//   });
+// }
 
 
 function drawWeekday(id) {
@@ -130,9 +130,12 @@ function update_statistics() {
   start_data = tomorrow.toJSON().slice(0,10);
   $.getJSON('/majordomo/analytics/get_statistics?date=' + start_data, function(result) {
     document.getElementById("mean_rating").textContent = result.mean_rating;
+    document.getElementById("precision").textContent = result.precision + '%';
     document.getElementById("videos_rated_distinct").textContent = result.videos_rated_distinct;
     document.getElementById("videos_rated_total").textContent = result.videos_rated_total;
-    document.getElementById("most_active_user").textContent = "ID: "+ result.most_active_user_id + " - total: " + result.most_active_user_count + "";
+    document.getElementById("mean_videos_rated").textContent = result.mean_videos_rated;
+    document.getElementById("most_active_user").textContent = result.most_active_user_id 
+    document.getElementById("most_active_user_count").textContent = result.most_active_user_count;
     document.getElementById("stats_users").textContent = result.n_active_users + "/" + result.n_total_users + " ("+ result.active_users_percent + " %)";
   })
 
@@ -171,42 +174,44 @@ function update_statistics() {
 <div class="row" id="statistics">
     <div class="col-sm-2">
         <div class="well kpi-box">
-             Ratings: <br/>
-            <result id="videos_rated_total"></result>
+             Classificações: <br/>
+            <result id="videos_rated_total"></result> (distintos: <result id="videos_rated_distinct"></result>)
         </div>
     </div>
     <div class="col-sm-2">
         <div class="well kpi-box">
-            Rated videos: <br />
-            <result id="videos_rated_distinct"></result>
+            Média de vídeos vistos por utilizador: <br />
+            <result id="mean_videos_rated"></result>
         </div>
     </div>
     <div class="col-sm-2">
         <div class="well kpi-box">
-             <br />
-            <result id=""></result>
+            Classificação média: <br/>
+            <result id="mean_rating"></result>
         </div>
     </div>
     <div class="col-sm-2">
         <div class="well kpi-box">
-             Active users: <br/>
+             Precisão do algoritmo: <br />
+            <result id="precision"></result>
+        </div>
+    </div>    
+    <div class="col-sm-2">
+        <div class="well kpi-box">
+             Utilizadores ativos: <br/>
             <result id="stats_users"></result>
         </div>
     </div>
     <div class="col-sm-2">
         <div class="well kpi-box">
-            Most active user: <br/>
-            <result id="most_active_user"></result>
+            Utilizador mais ativo: <br/>
+            ID: <result id="most_active_user"></result>
+              <br/>
+            Vídeos vistos: <result id="most_active_user_count"></result>
         </div>
     </div>
-    <div class="col-sm-2">
-        <div class="well kpi-box">
-            Average rating: <br/>
-            <result id="mean_rating"></result>
-        </div>
-    </div>
-
 </div>
+
 <div class="row">
     <div class="col-sm-6">
         <list>
@@ -222,10 +227,20 @@ function update_statistics() {
 
 <div class="row">
     <div class="col-sm-6">
-        <div id="p3" class="well"></div>
+        <div id="p3"><img src="/majordomo/img/rating_dailyevolution" /></div>
     </div>
     <div class="col-sm-6">
         <div id="p4" class="well"></div>
+    </div>
+</div>
+
+
+<div class="row">
+    <div class="col-sm-6">
+        <div id="p5"><img src="/majordomo/img/user_ratings"/></div>
+    </div>
+    <div class="col-sm-6">
+        <div id="p4"><img src="/majordomo/img/rating_types"/></div>
     </div>
 </div>
 
@@ -234,7 +249,7 @@ function update_statistics() {
 update_statistics();
 //drawChart("#p1");
 drawRatingChart("#p2");
-drawDailyEvolution("#p3")
+// drawDailyEvolution("#p3")
 drawWeekday("#p4")
 getTopContent();
 </script>

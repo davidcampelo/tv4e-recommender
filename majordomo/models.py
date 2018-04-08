@@ -62,5 +62,5 @@ class Rating(models.Model):
     overall_rating_value = models.DecimalField(decimal_places=9, max_digits=10, default=0)
 
     def __str__(self):
-        return "user_id: {}, video_id: {}, watch_time: {}, value: {}, date_creation: {}, watched_tyoe: {}"\
-            .format(self.user.id, self.video.id, self.watch_time, self.value, self.date_creation, self.watched_type)
+        return "user_id: {}, video_id: {}, watch_time: {}, rating_implicit: {}, rating_explicit: {},  date_creation: {}, watched_tyoe: {}"\
+            .format(self.user.id, self.video.id, self.watch_time, self.rating_implicit, self.rating_explicit, self.date_creation, self.watched_type)
