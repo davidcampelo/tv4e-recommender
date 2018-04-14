@@ -38,6 +38,7 @@ class Video(models.Model):
     # ALTER TABLE `tv4e`.`majordomo_video` CHANGE COLUMN `desc`
     # `desc` LONGTEXT CHARACTER SET 'utf8' NOT NULL ;
     desc = models.TextField()
+    duration = models.IntegerField(null=True)
     date_creation = models.DateTimeField(blank=False, null=False)
     location = models.CharField(max_length=3, null=True, blank=True)
     asgie = models.ForeignKey(Asgie, null=False)

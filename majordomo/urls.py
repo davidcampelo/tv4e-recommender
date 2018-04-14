@@ -20,5 +20,6 @@ urlpatterns = [
     url(r'^img/rating_types', views.img_rating_types, name='img_rating_types'),
     url(r'^img/rating_dailyevolution', views.img_rating_dailyevolution, name='img_rating_dailyevolution'),  
     url(r'^img/rating_weekday', views.img_rating_weekday, name='img_rating_weekday'),
+    url(r'^img/rating_hour', views.img_rating_hour, name='img_rating_hour'),
 
 ]

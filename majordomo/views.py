@@ -31,6 +31,35 @@ LIST_OF_DEV_USER_ID = ['1', '2', '3', '9', '21']
 
 #
 #
+def img_rating_hour(request):
+    ratings_query = Rating.objects.exclude(Q(watched_type='forced') | Q(user_id__in=LIST_OF_DEV_USER_ID))
+    df_ratings = pd.DataFrame(list(ratings_query.values()))
+
+    df_ratings['hour'] = pd.to_datetime(df_ratings['date_creation']).dt.hour 
+    counter = Counter(df_ratings['hour'])   
+
+    df = pd.DataFrame(list(counter.items()), columns=['hour', 'count'])
+
+    # Plot figure
+    fig = Figure()
+    ax=fig.add_subplot(1,1,1)
+    ax.set_title('Distribuição das visualizações nas horas do dia', fontsize='medium')
+    ax.bar(df.index, df['count'], color='#428bca', width=0.9)
+    ax.set_ylabel('Quantidade', fontsize='small')
+    ax.set_xticks(range(len(df.hour)))
+    ax.set_xticklabels(df.hour)
+    ax.grid(True)
+    fig.subplots_adjust(right=0.97, top=0.95, left=0.09, bottom=0.10)
+
+    # Create response object
+    canvas = FigureCanvas(fig)
+    response = HttpResponse(content_type='image/png')
+    canvas.print_png(response)
+
+    return response
+
+
+#
 def img_rating_weekday(request):
     ratings_query = Rating.objects.exclude(Q(watched_type='forced') | Q(user_id__in=LIST_OF_DEV_USER_ID))
     df_ratings = pd.DataFrame(list(ratings_query.values()))
@@ -54,10 +83,9 @@ def img_rating_weekday(request):
     # Plot figure
     fig = Figure()
     ax=fig.add_subplot(1,1,1)
-    ax.set_title('Distribuição diária das classificações', fontsize='medium')
+    ax.set_title('Distribuição das visualizações nos dias da semana', fontsize='medium')
     ax.bar(df_ratings_weekday.index, df_ratings_weekday['count'], color='#428bca', width=0.9)
     ax.set_ylabel('Quantidade', fontsize='small')
-    ax.set_xlabel('Dia da semana', fontsize='small')
     ax.set_xticks(range(len(weekdays_values)))
     ax.set_xticklabels(weekdays_values)
     ax.grid(True)

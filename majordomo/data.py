@@ -119,7 +119,8 @@ class TV4EDataConnector(object):
                             desc=row.video_desc,
                             date_creation=pytz.utc.localize(dateutil.parser.parse(row.video_date_creation)),
                             location=row.video_location,
-                            asgie=Asgie.objects.only('id').get(id=row.video_asgie_id)
+                            asgie=Asgie.objects.only('id').get(id=row.video_asgie_id),
+                            duration=row.duration
                         )
                     else:
                         video = Video.objects.get(id=row.video_id)
@@ -128,6 +129,7 @@ class TV4EDataConnector(object):
                         video.date_creation=pytz.utc.localize(dateutil.parser.parse(row.video_date_creation))
                         video.location=row.video_location
                         video.asgie=Asgie.objects.only('id').get(id=row.video_asgie_id)
+                        video.duration=row.duration
                     video.save()
                 except:
                     logging.error("Error while saving Video: video_id={}".format(row.video_id))
