@@ -14,8 +14,8 @@
 <script src="http://dimplejs.org/dist/dimple.v2.0.0.min.js"></script>
 <script>
 var margin = {top: 20, right: 0, bottom: 30, left: 50},
-    width = 600 - margin.left - margin.right,
-    height = 400 - margin.top - margin.bottom,
+    width = 630 - margin.left - margin.right,
+    height = 300 - margin.top - margin.bottom,
     maxHeight = height - 30,
     padding = 5;
 
@@ -51,7 +51,7 @@ function drawRatingChart(id) {
     myChart.addMeasureAxis("y", "quantidade" );
     myChart.addSeries(null, dimple.plot.bar);
     myChart.addSeries(null, dimple.plot.line);
-    myChart.setBounds(40, 30,480, 250);
+    myChart.setBounds(50, 30, 530, 180);
     x.addOrderRule("classificação");
     myChart.draw();
 
@@ -238,7 +238,7 @@ function update_statistics() {
         <div id="p3"><img src="/majordomo/img/rating_dailyevolution" /></div>
     </div>
     <div class="col-sm-6">
-        <div id="p4"></div>
+        <div id="p4"><img src="/majordomo/img/rating_evolution" /></div>
     </div>
 </div>
     <br />
@@ -248,6 +248,13 @@ function update_statistics() {
     </div>
     <div class="col-sm-6">
         <div id="p6"><img src="/majordomo/img/rating_weekday" /></div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-sm-6">
+        <div id="p5"><img src="/majordomo/img/rating_correlation" /></div>
+    </div>
+    <div class="col-sm-6">
     </div>
 </div>
 

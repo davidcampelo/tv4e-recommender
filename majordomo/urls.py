@@ -21,5 +21,7 @@ urlpatterns = [
     url(r'^img/rating_dailyevolution', views.img_rating_dailyevolution, name='img_rating_dailyevolution'),  
     url(r'^img/rating_weekday', views.img_rating_weekday, name='img_rating_weekday'),
     url(r'^img/rating_hour', views.img_rating_hour, name='img_rating_hour'),
-
+    url(r'^img/rating_evolution', views.img_rating_evolution, name='img_rating_evolution'),
+    url(r'^img/rating_correlation', views.img_rating_correlation, name='img_rating_correlation'),
+    url(r'^img/user_rating_correlation/(?P<user_id>\w+)/$', views.img_user_rating_correlation, name='img_user_rating_correlation'),
 ]
