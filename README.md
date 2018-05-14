@@ -1,8 +1,10 @@
 # +TV4E recommender system
 
-The [+TV4E Project](http://socialitv.web.ua.pt/index.php/projects/sponsored-projects/tv4e/)[1] is an interactive television platform which allows automatically the enrichment of television experience with the integration of social contents. In order to achieve a more compelling and personalized approach a system for recommending video contents according to the users' preferences.
+The [+TV4E Project](http://www.tv4e.pt/)[1] is an interactive television platform which allows automatically the enrichment of television experience with the integration of social contents. In order to achieve a more compelling and personalized approach a system for recommending video contents according to the users' preferences.
 
 This system has been developed in the scope of a PhD research [2] in the context of the Doctoral Program of Information and  Communication in Digital Platforms (University of Aveiro, Portugal). It proposes a context aware recommender system (CARS) of informative contents about Assistance  Services  of  General  Interest  for the Elderly (ASGIE), for later exhibition on an Interactive TV (iTV) platform. The motivation of this research is to enhance the TV watching experience and promote seniors’ autonomy, wellbeing and info-inclusion by providing personalized high-valued informative contents. 
+
+An example of installation of this code was installed in a web server for tests with potential end users and can be found at [http://79.137.39.168:8080](http://79.137.39.168:8080/view/).
 
 ## Installation/Configuration guide:
 
